@@ -23,9 +23,7 @@ void init_masValue(char* values,struct command* cmd)
         char* current=listValue[i];
         cmd->masValue[i]=malloc(sizeof(struct KeyValue*));
         cmd->masValue[i]->key= strtok(current,"=");
-        cmd->masValue[i]->value= strtok(NULL,"=");
-
-
+        cmd->masValue[i]->value= strtok(NULL,"=");//!
     }
     cmd->countValue=countValue;
 }
@@ -60,18 +58,15 @@ char* parser()
     {
         cmd->name_command=strtok(str," ");
         //create $.a[]
-        if(strcmp(cmd->name_command,"create")==0||strcmp(cmd->name_command,"CREATE")==0)
-        {
             char* other=strtok(NULL," ");
             cmd->path=strtok(other,"[");
-            char* values1=(strtok(NULL,"["));
-            char* values2=strtok(values1,"]");
+            char* values1=(strtok(NULL,"]"));
+            char* values2=strtok(values1,"\n");//!
             init_masValue(values2,cmd);
-        }
 
         char* xml=converToXML(cmd);
         //Просто для отладки,вывходит распарсенную команду в тестовый файл
-        FILE *fp=fopen("xml.txt", "w");
+       FILE *fp=fopen("xml.txt", "w");
         fprintf(fp, "%s", "<?xml version=\"1.0\"?>");
         fprintf(fp, "%s", xml);
         fclose(fp);

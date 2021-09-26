@@ -44,7 +44,8 @@ int main() {
             if (new_socket < 0) perro("accept");
             if (dup2(new_socket, STDOUT_FILENO) == -1) perro("dup2");
             if (dup2(new_socket, STDERR_FILENO) == -1) perro("dup2");
-            while (1) {
+            while (1)
+            {
                 int readc = 0, filled = 0;
                 while (1) {
                     readc = recv(new_socket, buf + filled, MAX_MSG_LENGTH - filled - 1, 0);
@@ -56,7 +57,7 @@ int main() {
                     D("\t[%d] Client disconnected.\n", pid);
                     break;
                 }
-                buf[strcspn(buf, "\n")] = 0; // remove newline symbol
+                // buf[strcspn(buf, "\n")] = 0; // remove newline symbol
                 D("\t[%d] Command received: %s\n", pid, buf);
                 D("\t[%d] Parsing command.\n", pid);
 

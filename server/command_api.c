@@ -12,20 +12,20 @@ void parse_xml_to_struct(xmlXPathContextPtr xpathCtx,struct command* cmd)
 
     for(int i=0;i<cmd->countValue;i++)
     {
-        struct keyValue* newKV= malloc(sizeof(struct keyValue*));
+        struct keyValue* newKV= malloc(sizeof(struct keyValue));
         newKV->value=result->nodeTab[i]->children->content;
         newKV->key=result->nodeTab[i]->properties->children->content;
         cmd->masValue[i]=newKV;
     }
 
 }
-
+//elements_path - массив строк-массив элементов пути.a.d.b :
 void replaceFirstSymb(char* elements_path[])
 {
-    if(!strcmp(elements_path[0],"$")) elements_path[0]="";
+    if(!strcmp(elements_path[0],"$")) elements_path[0]="";// $.a.d.b= /a/d   a.d.b=//a/d
     else
     {
-        char buf[255]={NULL};
+        char buf[255]={0};
         strcat(buf,"//");
         strcat(buf,elements_path[0]);
         elements_path[0]=buf;
@@ -33,7 +33,7 @@ void replaceFirstSymb(char* elements_path[])
 }
 
 char* createXpath(char* elements_path[])
-{
+{//b.a.c.Y  //b a c    $.b.a.c.Y =!?
     char* xpathForFind=malloc(255*sizeof(char));
     size_t k=0;
     while(elements_path[k]!=NULL)
@@ -66,13 +66,16 @@ char* preparePath(char* targetElement,struct command* cmd)
     char** elements_path=malloc(sizeof(char*)*255);
     size_t i=0;
     elements_path[i]=strtok(cmd->path,".");
-
+     //d.a.b[g=5],target = b
     //замена первого символа пути - абсолютный или локальный путь
     replaceFirstSymb(elements_path);
 
     // в массив из path
-    while(elements_path[i]!=NULL) elements_path[++i]=strtok(NULL,".");
+    while(elements_path[i]!=NULL)
+        elements_path[++i]=strtok(NULL,".");//!!
+
     strcpy(targetElement, elements_path[i-1] );
+
     elements_path[i-1]='\0';
 
     //Создание Xpath-Запрос из массива имен элементов
@@ -87,7 +90,7 @@ void save(char* file,char* xpathValue,char* targetElement,struct command* cmd)
     xmlXPathContextPtr xpathCtx1 = xmlXPathNewContext(docPtr1);
 
 
-    xmlNodePtr* xmlNodePtr1=xmlXPathEvalExpression(xpathValue, BAD_CAST xpathCtx1)->nodesetval->nodeTab;
+    xmlNodePtr* xmlNodePtr1 = xmlXPathEvalExpression(xpathValue, BAD_CAST xpathCtx1)->nodesetval->nodeTab;
 
     addNewNode(xmlNodePtr1,targetElement,cmd->masValue);
     xmlDocSetRootElement(docPtr1,root_element);
@@ -97,7 +100,7 @@ void reciveCommand(const char *text)
 {
     struct command *cmd=malloc(sizeof(struct command));
     //считываем xml
-    const xmlDoc *docPtr=xmlRecoverDoc(text);
+    const xmlDoc *docPtr = xmlRecoverDoc(text);
 
     //Для Xpath
     xmlXPathContextPtr xpathCtx;
@@ -109,7 +112,8 @@ void reciveCommand(const char *text)
     if(strcmp(cmd->name_command,"create")==0||strcmp(cmd->name_command,"CREATE")==0)
     {
         //Элемент,который надо добавить
-        char* targetElement=malloc(sizeof(char*)*255);
+        //c.d.a.b target="b"
+        char* targetElement=malloc(sizeof(char)*255);
         //Xpath - запрос
         char* xpathValue;
         xpathValue = preparePath(targetElement,cmd);

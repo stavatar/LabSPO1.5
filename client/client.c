@@ -8,8 +8,9 @@ void send_cmd(int sock, int pid)
 
     while(buf!=NULL)
         {
-            buf=parser();
+            buf=parser();//!
             if(send(sock, buf, strlen(buf)+1, 0) < 0) perro("send");
+
         }
 
 
