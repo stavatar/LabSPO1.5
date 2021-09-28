@@ -1,0 +1,1 @@
+/usr/bin/cc -pthread -g   CMakeFiles/server.dir/server/server.c.o CMakeFiles/server.dir/util.c.o CMakeFiles/server.dir/server/command_api.c.o  -o server  /usr/lib/x86_64-linux-gnu/libxml2.so 

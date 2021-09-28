@@ -1,0 +1,1 @@
+<?xml version="1.0"?><Command><Name>create</Name><Path>a.b</Path><Value key="g">5</Value></Command><Command><Name>create</Name><Path>$.a.b</Path><Value key="test">some text</Value></Command>

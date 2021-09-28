@@ -1,0 +1,1 @@
+/usr/bin/cc -pthread -g   CMakeFiles/client.dir/client/client.c.o CMakeFiles/client.dir/util.c.o CMakeFiles/client.dir/client/cmd_parser.c.o  -o client 

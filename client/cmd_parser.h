@@ -1,7 +1,3 @@
-//
-// Created by stavatar on 23.09.2021.
-//
-
 #ifndef SPO_CMD_PARSER_H
 #define SPO_CMD_PARSER_H
 #include <stdio.h>
@@ -9,6 +5,9 @@
 #include <malloc.h>
 #include "../util.h"
 #include "../mt.h"
-char* parser();
 
-#endif //SPO_CMD_PARSER_H
+void readCmd(char* inputCmd, size_t size);
+struct command parseInputCmd(char* strCmd);
+void cmdToXml(struct command cmd, char* result);
+
+#endif

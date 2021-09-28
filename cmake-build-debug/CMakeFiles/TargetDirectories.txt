@@ -1,0 +1,4 @@
+/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/server.dir
+/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/client.dir

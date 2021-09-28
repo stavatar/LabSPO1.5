@@ -9,8 +9,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <json-c/json.h>
-#include <bson/bson.h>
 
 
 #include <signal.h>
@@ -25,7 +23,7 @@
 #define MSG_NOSIGNAL SO_NOSIGPIPE
 #endif
 
-#define perro(x) {fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, x, strerror(errno));exit(1);}
+#define printError(x) { fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, x, strerror(errno)); exit(1);}
 
 
 

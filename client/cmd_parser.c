@@ -1,75 +1,63 @@
-//
-// Created by stavatar on 23.09.2021.
-//
-
+#include <ctype.h>
 #include "cmd_parser.h"
 
+void initCmd(char* values, struct command* cmd) {
+    char* params[64];
+    size_t paramCount;
 
-void init_masValue(char* values,struct command* cmd)
-{
-
-    char** listValue=malloc(sizeof(char*));
-    size_t countValue=0;
-    listValue[0]= strtok(values,",");
-
-    while(listValue[countValue] != NULL)
-    {
-        countValue++;
-        listValue[countValue]= strtok(NULL, ",");
+    params[0] = strtok(values,",");
+    for (paramCount = 1; params[paramCount-1] != NULL; paramCount++) {
+        params[paramCount] = strtok(NULL, ",");
     }
+    cmd->paramCount = --paramCount;
 
-    for(size_t i=0; i < (countValue); i++)
-    {
-        char* current=listValue[i];
-        cmd->masValue[i]=malloc(sizeof(struct KeyValue*));
-        cmd->masValue[i]->key= strtok(current,"=");
-        cmd->masValue[i]->value= strtok(NULL,"=");//!
+    cmd->keyValueArray = malloc(sizeof(struct keyValue) * paramCount);
+    for (size_t i = 0; i < paramCount; i++) {
+        cmd->keyValueArray[i].key = strtok(params[i], "=");
+        cmd->keyValueArray[i].value = strtok(NULL, "=");
     }
-    cmd->countValue=countValue;
 }
-char* converToXML(struct command* cmd) {
-    char* result=malloc(sizeof(char)* MAX_MSG_LENGTH) ;
-    strcat(result, "<Command>");
-    strcat(result, "<Name>");
-    strcat(result, cmd->name_command);
-    strcat(result, "</Name> ");
 
-    strcat(result, "<Path>");
-    strcat(result, cmd->path);
-    strcat(result, "</Path> ");
-
-    for (int i = 0; i < (cmd->countValue); ++i)
-    {
-        strcat(result, "<Value key=\"");
-        strcat(result, cmd->masValue[i]->key);
-        strcat(result, "\">");
-        strcat(result, cmd->masValue[i]->value);
-        strcat(result, "</Value> ");
+void toLowerCase(char* str, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        str[i] = (char) tolower(str[i]);
     }
-    strcat(result, "</Command>");
-    return result;
 }
-char* parser()
-{
-    struct command *cmd=malloc(sizeof(struct command));
-    *cmd->masValue=malloc(sizeof(struct keyValue*)*255);
-    char str[MAX_MSG_LENGTH] = {0};
-    while (fgets(str, MAX_MSG_LENGTH, stdin) == str)
-    {
-        cmd->name_command=strtok(str," ");
-        //create $.a[]
-            char* other=strtok(NULL," ");
-            cmd->path=strtok(other,"[");
-            char* values1=(strtok(NULL,"]"));
-            char* values2=strtok(values1,"\n");//!
-            init_masValue(values2,cmd);
 
-        char* xml=converToXML(cmd);
-        //Просто для отладки,вывходит распарсенную команду в тестовый файл
-       FILE *fp=fopen("xml.txt", "w");
-        fprintf(fp, "%s", "<?xml version=\"1.0\"?>");
-        fprintf(fp, "%s", xml);
-        fclose(fp);
-        return xml;
+struct command parseInputCmd(char* strCmd) {
+    struct command cmd;
+
+    cmd.name = strtok(strCmd," ");
+    char* other = strtok(NULL,"\n");
+    cmd.path = strtok(other,"[");
+    char* values1 = strtok(NULL,"]");
+    char* values2 = strtok(values1,"\n");
+    initCmd(values2, &cmd);
+
+    toLowerCase(cmd.name, strlen(cmd.name));
+    toLowerCase(cmd.path, strlen(cmd.path));
+
+    return cmd;
+}
+
+void cmdToXml(const struct command cmd, char* const outputXml) {
+    strcat(outputXml, "<Command>");
+    strcat(outputXml, "<Name>");
+    strcat(outputXml, cmd.name);
+    strcat(outputXml, "</Name>");
+    strcat(outputXml, "<Path>");
+    strcat(outputXml, cmd.path);
+    strcat(outputXml, "</Path>");
+    for (int i = 0; i < cmd.paramCount; i++) {
+        strcat(outputXml, "<Value key=\"");
+        strcat(outputXml, cmd.keyValueArray[i].key);
+        strcat(outputXml, "\">");
+        strcat(outputXml, cmd.keyValueArray[i].value);
+        strcat(outputXml, "</Value>");
     }
+    strcat(outputXml, "</Command>");
+}
+
+void readCmd(char* inputCmd, size_t size) {
+    fgets(inputCmd, (int) size, stdin);
 }

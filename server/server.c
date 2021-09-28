@@ -4,16 +4,12 @@
 #define D(...) fprintf(new_stream, __VA_ARGS__)
 
 int main() {
-
-
     int sock;
     struct sockaddr_in name;
-    char buf[MAX_MSG_LENGTH] = {0};
-
-
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) perro("opening socket");
+    if (sock < 0)
+        printError("opening socket");
 
     int optval = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
@@ -21,49 +17,60 @@ int main() {
     name.sin_family = AF_INET;
     name.sin_addr.s_addr = INADDR_ANY;
     name.sin_port = htons(PORT);
-    if (bind(sock, (void *) &name, sizeof(name))) perro("binding tcp socket");
-    if (listen(sock, 1) == -1) perro("listen");
+    if (bind(sock, (void *) &name, sizeof(name)))
+        printError("binding tcp socket");
+    if (listen(sock, 1) == -1)
+        printError("listen");
 
     struct sockaddr cli_addr;
-    int cli_len = sizeof(cli_addr);
+    socklen_t cli_len = sizeof(cli_addr);
     int new_socket, new_fd, pid;
     FILE *new_stream;
 
     new_fd = dup(STDERR_FILENO) == -1;
-    if (new_fd) perro("dup");
+    if (new_fd)
+        printError("dup");
     new_stream = fdopen(2, "w");
     setbuf(new_stream, NULL); // sin buffering
 
     D("Initializing server...\n");
     new_socket = accept(sock, &cli_addr, &cli_len);
     while (new_socket) {
-        D("Client connected.\nForking... ");
-        if (pid = fork()) D("child pid = %d.\n", pid);
+        D("Client connected.\n");
+        pid = fork();
+        if (pid) D("child pid = %d.\n", pid);
         else {
             pid = getpid();
-            if (new_socket < 0) perro("accept");
-            if (dup2(new_socket, STDOUT_FILENO) == -1) perro("dup2");
-            if (dup2(new_socket, STDERR_FILENO) == -1) perro("dup2");
-            while (1)
-            {
-                int readc = 0, filled = 0;
+            if (new_socket < 0)
+                printError("accept");
+            if (dup2(new_socket, STDOUT_FILENO) == -1)
+                printError("dup2");
+            if (dup2(new_socket, STDERR_FILENO) == -1)
+                printError("dup2");
+            while (1) {
+                size_t readc;
+                size_t filled = 0;
+                char xmlInput[MAX_MSG_LENGTH] = {0};
                 while (1) {
-                    readc = recv(new_socket, buf + filled, MAX_MSG_LENGTH - filled - 1, 0);
-                    if (!readc) break;
+                    readc = recv(new_socket, xmlInput + filled, MAX_MSG_LENGTH - filled - 1, 0);
+                    if (!readc)
+                        break;
                     filled += readc;
-                    if (buf[filled - 1] == '\0') break;
+                    if (xmlInput[filled - 1] == '\0')
+                        break;
                 }
                 if (!readc) {
                     D("\t[%d] Client disconnected.\n", pid);
                     break;
                 }
                 // buf[strcspn(buf, "\n")] = 0; // remove newline symbol
-                D("\t[%d] Command received: %s\n", pid, buf);
+                D("\t[%d] Command received: %s\n", pid, xmlInput);
                 D("\t[%d] Parsing command.\n", pid);
 
-                reciveCommand(buf);
+                struct command cmd = xmlToCmd(xmlInput);
+                cmdExec(cmd);
 
-                send(new_socket, "\n>\t", 3, MSG_NOSIGNAL);
+                send(new_socket, "\n\t>", 3, MSG_NOSIGNAL);
             }
             close(new_socket);
             D("\t[%d] Dying.\n", pid);
@@ -75,3 +82,22 @@ int main() {
     close(sock);
     return 0;
 }
+
+// CREATE:
+// Добавить новый параметр существующему элементу
+// существует $.a.b[g=5], надо добавить параметр h=10
+// create $.a.b[h=10]
+// create $.a b[h=10]
+
+// READ:
+// Если путь относительный - возвращать первый или весь список ???
+// read a.b[g,h]
+// read $.a.b
+
+// UPDATE:
+// Если указан ключ, которого нет - возвращаем сообщение об ошибке
+// update $.a.b[h=10]
+
+// DELETE:
+// delete $.a.b
+// delete $.a.b[g]
