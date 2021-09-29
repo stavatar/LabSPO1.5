@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5
+CMAKE_SOURCE_DIR = /home/stavatar/project/spo1.5v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug
+CMAKE_BINARY_DIR = /home/stavatar/project/spo1.5v2/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles /home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -217,6 +217,33 @@ server/command_api.c.s:
 	$(MAKE) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/command_api.c.s
 .PHONY : server/command_api.c.s
 
+server/methodApi/methodApi.o: server/methodApi/methodApi.c.o
+
+.PHONY : server/methodApi/methodApi.o
+
+# target to build an object file
+server/methodApi/methodApi.c.o:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/server/methodApi/methodApi.c.o
+.PHONY : server/methodApi/methodApi.c.o
+
+server/methodApi/methodApi.i: server/methodApi/methodApi.c.i
+
+.PHONY : server/methodApi/methodApi.i
+
+# target to preprocess a source file
+server/methodApi/methodApi.c.i:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/server/methodApi/methodApi.c.i
+.PHONY : server/methodApi/methodApi.c.i
+
+server/methodApi/methodApi.s: server/methodApi/methodApi.c.s
+
+.PHONY : server/methodApi/methodApi.s
+
+# target to generate assembly for a file
+server/methodApi/methodApi.c.s:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/server/methodApi/methodApi.c.s
+.PHONY : server/methodApi/methodApi.c.s
+
 server/server.o: server/server.c.o
 
 .PHONY : server/server.o
@@ -293,6 +320,9 @@ help:
 	@echo "... server/command_api.o"
 	@echo "... server/command_api.i"
 	@echo "... server/command_api.s"
+	@echo "... server/methodApi/methodApi.o"
+	@echo "... server/methodApi/methodApi.i"
+	@echo "... server/methodApi/methodApi.s"
 	@echo "... server/server.o"
 	@echo "... server/server.i"
 	@echo "... server/server.s"

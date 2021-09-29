@@ -8,6 +8,6 @@
 #include "../mt.h"
 
 struct command xmlToCmd(char* xmlInput);
-void cmdExec(struct command cmd);
+void cmdExec(struct command cmd,char* result);
 
 #endif

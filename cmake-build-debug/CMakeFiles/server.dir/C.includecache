@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 sys/types.h
 -
 sys/socket.h
@@ -32,11 +32,11 @@ string.h
 signal.h
 -
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c
+/home/stavatar/project/spo1.5v2/server/command_api.c
 command_api.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.h
+/home/stavatar/project/spo1.5v2/server/command_api.h
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.h
+/home/stavatar/project/spo1.5v2/server/command_api.h
 libxml/parser.h
 -
 libxml/xpath.h
@@ -46,11 +46,11 @@ string.h
 malloc.h
 -
 ../util.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
+/home/stavatar/project/spo1.5v2/util.h
 ../mt.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
+/home/stavatar/project/spo1.5v2/util.h
 stdbool.h
 -
 

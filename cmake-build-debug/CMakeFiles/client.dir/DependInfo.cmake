@@ -4,9 +4,10 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/client.dir/client/client.c.o"
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/client.dir/client/cmd_parser.c.o"
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/client.dir/util.c.o"
+  "/home/stavatar/project/spo1.5v2/client/client.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/client.dir/client/client.c.o"
+  "/home/stavatar/project/spo1.5v2/client/cmd_parser.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/client.dir/client/cmd_parser.c.o"
+  "/home/stavatar/project/spo1.5v2/server/methodApi/methodApi.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/client.dir/server/methodApi/methodApi.c.o"
+  "/home/stavatar/project/spo1.5v2/util.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/client.dir/util.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

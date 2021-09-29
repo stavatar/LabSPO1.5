@@ -15,6 +15,7 @@ void initCmd(char* values, struct command* cmd) {
     for (size_t i = 0; i < paramCount; i++) {
         cmd->keyValueArray[i].key = strtok(params[i], "=");
         cmd->keyValueArray[i].value = strtok(NULL, "=");
+
     }
 }
 
@@ -33,7 +34,11 @@ struct command parseInputCmd(char* strCmd) {
     char* values1 = strtok(NULL,"]");
     char* values2 = strtok(values1,"\n");
     initCmd(values2, &cmd);
-
+    if(cmd.name==NULL||cmd.path==NULL)
+    {
+        strCmd=NULL ;
+        return cmd;
+    }
     toLowerCase(cmd.name, strlen(cmd.name));
     toLowerCase(cmd.path, strlen(cmd.path));
 
@@ -52,7 +57,8 @@ void cmdToXml(const struct command cmd, char* const outputXml) {
         strcat(outputXml, "<Value key=\"");
         strcat(outputXml, cmd.keyValueArray[i].key);
         strcat(outputXml, "\">");
-        strcat(outputXml, cmd.keyValueArray[i].value);
+        if(cmd.keyValueArray[i].value!=NULL)
+            strcat(outputXml, cmd.keyValueArray[i].value);
         strcat(outputXml, "</Value>");
     }
     strcat(outputXml, "</Command>");

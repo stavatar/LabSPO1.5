@@ -6,23 +6,23 @@
 
 #IncludeRegexTransform: 
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c
+/home/stavatar/project/spo1.5v2/client/client.c
 ../mt.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 ../util.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
+/home/stavatar/project/spo1.5v2/util.h
 ./cmd_parser.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.h
+/home/stavatar/project/spo1.5v2/client/cmd_parser.h
 ../mt.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c
+/home/stavatar/project/spo1.5v2/client/cmd_parser.c
 ctype.h
 -
 cmd_parser.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.h
+/home/stavatar/project/spo1.5v2/client/cmd_parser.h
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.h
+/home/stavatar/project/spo1.5v2/client/cmd_parser.h
 stdio.h
 -
 string.h
@@ -30,11 +30,11 @@ string.h
 malloc.h
 -
 ../util.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
+/home/stavatar/project/spo1.5v2/util.h
 ../mt.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h
+/home/stavatar/project/spo1.5v2/mt.h
 sys/types.h
 -
 sys/socket.h
@@ -60,13 +60,7 @@ string.h
 signal.h
 -
 
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c
-string.h
--
-util.h
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
-
-/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h
+/home/stavatar/project/spo1.5v2/util.h
 stdbool.h
 -
 

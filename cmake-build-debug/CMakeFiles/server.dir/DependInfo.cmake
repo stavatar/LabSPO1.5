@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/server.dir/server/command_api.c.o"
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/server.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/server.dir/server/server.c.o"
-  "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c" "/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/server.dir/util.c.o"
+  "/home/stavatar/project/spo1.5v2/server/command_api.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/server.dir/server/command_api.c.o"
+  "/home/stavatar/project/spo1.5v2/server/server.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/server.dir/server/server.c.o"
+  "/home/stavatar/project/spo1.5v2/util.c" "/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/server.dir/util.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

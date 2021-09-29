@@ -31,7 +31,7 @@ int main() {
     if (new_fd)
         printError("dup");
     new_stream = fdopen(2, "w");
-    setbuf(new_stream, NULL); // sin buffering
+    //setbuf(new_stream, NULL); // sin buffering
 
     D("Initializing server...\n");
     new_socket = accept(sock, &cli_addr, &cli_len);
@@ -67,10 +67,11 @@ int main() {
                 D("\t[%d] Command received: %s\n", pid, xmlInput);
                 D("\t[%d] Parsing command.\n", pid);
 
+                char result[MAX_MSG_LENGTH] = {0};
                 struct command cmd = xmlToCmd(xmlInput);
-                cmdExec(cmd);
-
-                send(new_socket, "\n\t>", 3, MSG_NOSIGNAL);
+                cmdExec(cmd,result);
+                strcat(result,"\n>");
+                send(new_socket, result, sizeof(result), MSG_NOSIGNAL);
             }
             close(new_socket);
             D("\t[%d] Dying.\n", pid);

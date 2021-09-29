@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5
+CMAKE_SOURCE_DIR = /home/stavatar/project/spo1.5v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug
+CMAKE_BINARY_DIR = /home/stavatar/project/spo1.5v2/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/server.dir/depend.make
@@ -59,42 +59,42 @@ include CMakeFiles/server.dir/flags.make
 
 CMakeFiles/server.dir/server/server.c.o: CMakeFiles/server.dir/flags.make
 CMakeFiles/server.dir/server/server.c.o: ../server/server.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/server.dir/server/server.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/server/server.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/server.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/server.dir/server/server.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/server/server.c.o   -c /home/stavatar/project/spo1.5v2/server/server.c
 
 CMakeFiles/server.dir/server/server.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/server.dir/server/server.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/server.c > CMakeFiles/server.dir/server/server.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/server/server.c > CMakeFiles/server.dir/server/server.c.i
 
 CMakeFiles/server.dir/server/server.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/server.dir/server/server.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/server.c -o CMakeFiles/server.dir/server/server.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/server/server.c -o CMakeFiles/server.dir/server/server.c.s
 
 CMakeFiles/server.dir/util.c.o: CMakeFiles/server.dir/flags.make
 CMakeFiles/server.dir/util.c.o: ../util.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/server.dir/util.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/util.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/server.dir/util.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/util.c.o   -c /home/stavatar/project/spo1.5v2/util.c
 
 CMakeFiles/server.dir/util.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/server.dir/util.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c > CMakeFiles/server.dir/util.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/util.c > CMakeFiles/server.dir/util.c.i
 
 CMakeFiles/server.dir/util.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/server.dir/util.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c -o CMakeFiles/server.dir/util.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/util.c -o CMakeFiles/server.dir/util.c.s
 
 CMakeFiles/server.dir/server/command_api.c.o: CMakeFiles/server.dir/flags.make
 CMakeFiles/server.dir/server/command_api.c.o: ../server/command_api.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/server.dir/server/command_api.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/server/command_api.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/server.dir/server/command_api.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/server.dir/server/command_api.c.o   -c /home/stavatar/project/spo1.5v2/server/command_api.c
 
 CMakeFiles/server.dir/server/command_api.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/server.dir/server/command_api.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c > CMakeFiles/server.dir/server/command_api.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/server/command_api.c > CMakeFiles/server.dir/server/command_api.c.i
 
 CMakeFiles/server.dir/server/command_api.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/server.dir/server/command_api.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c -o CMakeFiles/server.dir/server/command_api.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/server/command_api.c -o CMakeFiles/server.dir/server/command_api.c.s
 
 # Object files for target server
 server_OBJECTS = \
@@ -111,7 +111,7 @@ server: CMakeFiles/server.dir/server/command_api.c.o
 server: CMakeFiles/server.dir/build.make
 server: /usr/lib/x86_64-linux-gnu/libxml2.so
 server: CMakeFiles/server.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable server"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable server"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/server.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -124,6 +124,6 @@ CMakeFiles/server.dir/clean:
 .PHONY : CMakeFiles/server.dir/clean
 
 CMakeFiles/server.dir/depend:
-	cd /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/beerh/CLionProjects/LabSPO1.5 /mnt/c/Users/beerh/CLionProjects/LabSPO1.5 /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/server.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/stavatar/project/spo1.5v2/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/stavatar/project/spo1.5v2 /home/stavatar/project/spo1.5v2 /home/stavatar/project/spo1.5v2/cmake-build-debug /home/stavatar/project/spo1.5v2/cmake-build-debug /home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/server.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/server.dir/depend
 

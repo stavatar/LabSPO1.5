@@ -6,5 +6,5 @@ C_FLAGS = -pthread -g   -std=gnu99
 
 C_DEFINES = 
 
-C_INCLUDES = -I"/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/<my_stuff>" -I/usr/include/libxml2 
+C_INCLUDES = -I"/home/stavatar/project/spo1.5v2/<my_stuff>" -I/usr/include/libxml2 
 

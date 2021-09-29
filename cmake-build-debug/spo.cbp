@@ -8,43 +8,43 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="server">
-				<Option output="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option output="/home/stavatar/project/spo1.5v2/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/&lt;my_stuff&gt;"/>
+					<Add directory="/home/stavatar/project/spo1.5v2/&lt;my_stuff&gt;"/>
 					<Add directory="/usr/include/libxml2"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
 					<Add directory="/usr/local/include"/>
@@ -52,20 +52,20 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 server"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 server"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="server/fast">
-				<Option output="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option output="/home/stavatar/project/spo1.5v2/cmake-build-debug/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/&lt;my_stuff&gt;"/>
+					<Add directory="/home/stavatar/project/spo1.5v2/&lt;my_stuff&gt;"/>
 					<Add directory="/usr/include/libxml2"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
 					<Add directory="/usr/local/include"/>
@@ -73,20 +73,20 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 server/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 server/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="client">
-				<Option output="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option output="/home/stavatar/project/spo1.5v2/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/&lt;my_stuff&gt;"/>
+					<Add directory="/home/stavatar/project/spo1.5v2/&lt;my_stuff&gt;"/>
 					<Add directory="/usr/include/libxml2"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
 					<Add directory="/usr/local/include"/>
@@ -94,20 +94,20 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 client"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 client"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="client/fast">
-				<Option output="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug"/>
+				<Option output="/home/stavatar/project/spo1.5v2/cmake-build-debug/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/stavatar/project/spo1.5v2/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/&lt;my_stuff&gt;"/>
+					<Add directory="/home/stavatar/project/spo1.5v2/&lt;my_stuff&gt;"/>
 					<Add directory="/usr/include/libxml2"/>
 					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
 					<Add directory="/usr/local/include"/>
@@ -115,44 +115,50 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 client/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 client/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/stavatar/project/spo1.5v2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c">
+		<Unit filename="/home/stavatar/project/spo1.5v2/client/client.c">
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c">
+		<Unit filename="/home/stavatar/project/spo1.5v2/client/cmd_parser.c">
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.h">
+		<Unit filename="/home/stavatar/project/spo1.5v2/client/cmd_parser.h">
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/mt.h">
+		<Unit filename="/home/stavatar/project/spo1.5v2/mt.h">
 			<Option target="server"/>
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.c">
+		<Unit filename="/home/stavatar/project/spo1.5v2/server/command_api.c">
 			<Option target="server"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/command_api.h">
+		<Unit filename="/home/stavatar/project/spo1.5v2/server/command_api.h">
 			<Option target="server"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/server/server.c">
+		<Unit filename="/home/stavatar/project/spo1.5v2/server/methodApi/methodApi.c">
+			<Option target="client"/>
+		</Unit>
+		<Unit filename="/home/stavatar/project/spo1.5v2/server/methodApi/methodApi.h">
+			<Option target="client"/>
+		</Unit>
+		<Unit filename="/home/stavatar/project/spo1.5v2/server/server.c">
 			<Option target="server"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c">
+		<Unit filename="/home/stavatar/project/spo1.5v2/util.c">
 			<Option target="server"/>
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.h">
+		<Unit filename="/home/stavatar/project/spo1.5v2/util.h">
 			<Option target="server"/>
 			<Option target="client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/CMakeLists.txt">
+		<Unit filename="/home/stavatar/project/spo1.5v2/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

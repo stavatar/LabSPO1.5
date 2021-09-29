@@ -11,6 +11,9 @@ CMakeFiles/client.dir/client/cmd_parser.c.o: ../client/cmd_parser.h
 CMakeFiles/client.dir/client/cmd_parser.c.o: ../mt.h
 CMakeFiles/client.dir/client/cmd_parser.c.o: ../util.h
 
+CMakeFiles/client.dir/server/methodApi/methodApi.c.o: ../server/methodApi/methodApi.c
+CMakeFiles/client.dir/server/methodApi/methodApi.c.o: ../server/methodApi/methodApi.h
+
 CMakeFiles/client.dir/util.c.o: ../util.c
 CMakeFiles/client.dir/util.c.o: ../util.h
 

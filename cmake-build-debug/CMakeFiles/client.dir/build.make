@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5
+CMAKE_SOURCE_DIR = /home/stavatar/project/spo1.5v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug
+CMAKE_BINARY_DIR = /home/stavatar/project/spo1.5v2/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/client.dir/depend.make
@@ -59,48 +59,62 @@ include CMakeFiles/client.dir/flags.make
 
 CMakeFiles/client.dir/client/client.c.o: CMakeFiles/client.dir/flags.make
 CMakeFiles/client.dir/client/client.c.o: ../client/client.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/client.dir/client/client.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/client/client.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/client.dir/client/client.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/client/client.c.o   -c /home/stavatar/project/spo1.5v2/client/client.c
 
 CMakeFiles/client.dir/client/client.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/client.dir/client/client.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c > CMakeFiles/client.dir/client/client.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/client/client.c > CMakeFiles/client.dir/client/client.c.i
 
 CMakeFiles/client.dir/client/client.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/client.dir/client/client.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/client.c -o CMakeFiles/client.dir/client/client.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/client/client.c -o CMakeFiles/client.dir/client/client.c.s
 
 CMakeFiles/client.dir/util.c.o: CMakeFiles/client.dir/flags.make
 CMakeFiles/client.dir/util.c.o: ../util.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/client.dir/util.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/util.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/client.dir/util.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/util.c.o   -c /home/stavatar/project/spo1.5v2/util.c
 
 CMakeFiles/client.dir/util.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/client.dir/util.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c > CMakeFiles/client.dir/util.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/util.c > CMakeFiles/client.dir/util.c.i
 
 CMakeFiles/client.dir/util.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/client.dir/util.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/util.c -o CMakeFiles/client.dir/util.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/util.c -o CMakeFiles/client.dir/util.c.s
 
 CMakeFiles/client.dir/client/cmd_parser.c.o: CMakeFiles/client.dir/flags.make
 CMakeFiles/client.dir/client/cmd_parser.c.o: ../client/cmd_parser.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/client.dir/client/cmd_parser.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/client/cmd_parser.c.o   -c /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/client.dir/client/cmd_parser.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/client/cmd_parser.c.o   -c /home/stavatar/project/spo1.5v2/client/cmd_parser.c
 
 CMakeFiles/client.dir/client/cmd_parser.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/client.dir/client/cmd_parser.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c > CMakeFiles/client.dir/client/cmd_parser.c.i
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/client/cmd_parser.c > CMakeFiles/client.dir/client/cmd_parser.c.i
 
 CMakeFiles/client.dir/client/cmd_parser.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/client.dir/client/cmd_parser.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/client/cmd_parser.c -o CMakeFiles/client.dir/client/cmd_parser.c.s
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/client/cmd_parser.c -o CMakeFiles/client.dir/client/cmd_parser.c.s
+
+CMakeFiles/client.dir/server/methodApi/methodApi.c.o: CMakeFiles/client.dir/flags.make
+CMakeFiles/client.dir/server/methodApi/methodApi.c.o: ../server/methodApi/methodApi.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/client.dir/server/methodApi/methodApi.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/client.dir/server/methodApi/methodApi.c.o   -c /home/stavatar/project/spo1.5v2/server/methodApi/methodApi.c
+
+CMakeFiles/client.dir/server/methodApi/methodApi.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/client.dir/server/methodApi/methodApi.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/stavatar/project/spo1.5v2/server/methodApi/methodApi.c > CMakeFiles/client.dir/server/methodApi/methodApi.c.i
+
+CMakeFiles/client.dir/server/methodApi/methodApi.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/client.dir/server/methodApi/methodApi.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/stavatar/project/spo1.5v2/server/methodApi/methodApi.c -o CMakeFiles/client.dir/server/methodApi/methodApi.c.s
 
 # Object files for target client
 client_OBJECTS = \
 "CMakeFiles/client.dir/client/client.c.o" \
 "CMakeFiles/client.dir/util.c.o" \
-"CMakeFiles/client.dir/client/cmd_parser.c.o"
+"CMakeFiles/client.dir/client/cmd_parser.c.o" \
+"CMakeFiles/client.dir/server/methodApi/methodApi.c.o"
 
 # External object files for target client
 client_EXTERNAL_OBJECTS =
@@ -108,9 +122,10 @@ client_EXTERNAL_OBJECTS =
 client: CMakeFiles/client.dir/client/client.c.o
 client: CMakeFiles/client.dir/util.c.o
 client: CMakeFiles/client.dir/client/cmd_parser.c.o
+client: CMakeFiles/client.dir/server/methodApi/methodApi.c.o
 client: CMakeFiles/client.dir/build.make
 client: CMakeFiles/client.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable client"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/client.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -123,6 +138,6 @@ CMakeFiles/client.dir/clean:
 .PHONY : CMakeFiles/client.dir/clean
 
 CMakeFiles/client.dir/depend:
-	cd /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/beerh/CLionProjects/LabSPO1.5 /mnt/c/Users/beerh/CLionProjects/LabSPO1.5 /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug /mnt/c/Users/beerh/CLionProjects/LabSPO1.5/cmake-build-debug/CMakeFiles/client.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/stavatar/project/spo1.5v2/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/stavatar/project/spo1.5v2 /home/stavatar/project/spo1.5v2 /home/stavatar/project/spo1.5v2/cmake-build-debug /home/stavatar/project/spo1.5v2/cmake-build-debug /home/stavatar/project/spo1.5v2/cmake-build-debug/CMakeFiles/client.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/client.dir/depend
 

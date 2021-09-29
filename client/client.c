@@ -10,9 +10,15 @@ void sendQuery(int sock, int pid) {
         char inputCmd[MAX_MSG_LENGTH];
         // Читаем команду из стандартного потока ввода
         readCmd(inputCmd, sizeof(inputCmd));
-
+        if(strcmp(inputCmd,"\n")==0)
+            continue;
         // Парсим команду в структуру command
         cmd = parseInputCmd(inputCmd);
+        if(inputCmd==NULL)
+        {
+            printf("Ошибка ввода\n");
+            continue;
+        }
 
         // Парсим структуру в xml-строку
         cmdToXml(cmd, outputXml);
@@ -25,6 +31,7 @@ void sendQuery(int sock, int pid) {
 
         if (send(sock, outputXml, strlen(outputXml)+1, 0) < 0)
             printError("send");
+        outputXml[0]='\0';
     }
 
     free(cmd.keyValueArray);
@@ -39,7 +46,9 @@ void receive(int sock) {
     while (filled) {
 		buf[filled] = '\0';
 		printf("%s", buf);
+
         bzero(buf, sizeof(buf));
+
 		fflush(stdout);
         filled = recv(sock, buf, MAX_MSG_LENGTH - 1, 0);
     }

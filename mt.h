@@ -13,7 +13,7 @@
 
 #include <signal.h>
 
-#define PORT 5556
+#define PORT 5558
 #define MAX_MSG_LENGTH 1024
 #define END_STRING "chau" 
 
