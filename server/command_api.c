@@ -76,10 +76,8 @@ void save(char* file, char* xpathQuery, char* targetElement, const struct comman
     xmlDocSetRootElement(docPtr, rootElement);
     xmlSaveFormatFile("xml.xml", docPtr, 100);
 }
-void XpathForValue(char* xpath,struct command* cmd,char* nameParent)
+void XpathForValue(char* xpath,struct command* cmd)
 {
-    strcat(xpath,"/");
-    strcat(xpath,nameParent);
     strcat(xpath,"/child::Value");
     strcat(xpath,"[@key");
     if(cmd->paramCount>0)
@@ -120,9 +118,9 @@ void createTextResult(char* result,xmlNodePtr* xmlNodesValue,size_t countValue,c
 xmlNodePtr* findNodes(char* result,size_t* size,char* xpathQuery,xmlXPathContext* xpathCtxPtr)
 {
     xmlXPathObjectPtr xmlXPathObjectPtr1=xmlXPathEvalExpression(BAD_CAST xpathQuery, xpathCtxPtr);
-    if(xmlXPathObjectPtr1==NULL)
+    if(xmlXPathObjectPtr1->nodesetval==NULL)
     {
-        strcat(result,"Not found Node");
+        strcat(result,"Not found Node\n");
         return NULL ;
     }
 
@@ -150,7 +148,9 @@ void getNode(char* result,char* file, char* xpathQuery, const struct command* cm
     {
         char xpath[255]={0};
         //составляем xpath запрос
-        XpathForValue(xpath,cmd,xmlNodesElement[i]->name);
+        strcat(xpath,"/");
+        strcat(xpath,xmlNodesElement[i]->name);
+        XpathForValue(xpath,cmd);
         //поиск только в текущем узле
         xmlDocSetRootElement(docPtr,xmlNodesElement[i]);
         xpathCtxPtr = xmlXPathNewContext(docPtr);
@@ -169,25 +169,31 @@ void deleteNode(char* result,char* file, char* xpathQuery,const struct command* 
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
     size_t size=0;
-    xmlNodePtr* Nodes = findNodes(result,&size,xpathQuery,xpathCtxPtr);
+    xmlNodePtr* nodes = findNodes(result, &size, xpathQuery, xpathCtxPtr);
+    if(nodes == NULL)
+        return;
+
     if(size>1) {
         strcat(strcat, "Найдено более одного обьекта,повторите запрос");
         return;
     }
     if(cmd->paramCount==0)
         {
-            xmlUnlinkNode(Nodes[0]);
-            xmlFreeNode(Nodes[0]);
+            xmlUnlinkNode(nodes[0]);
+            xmlFreeNode(nodes[0]);
             strcat(result,"Обьект удален");
         }
     else
         {
             char xpath[255]={0};
-            XpathForValue(xpath,cmd,Nodes[0]->name);
-            xmlDocSetRootElement(docPtr,Nodes[0]);
-            xpathCtxPtr = xmlXPathNewContext(docPtr);
+            strcat(xpath,xpathQuery);
+            XpathForValue(xpath,cmd);
+            //xmlDocSetRootElement(docPtr, nodes[0]);
+            //xpathCtxPtr = xmlXPathNewContext(docPtr);
             size_t countValue;
             xmlNodePtr* NodesValues =  findNodes(result,&countValue,xpath,xpathCtxPtr);
+            if(NodesValues == NULL)
+                return;
             for(size_t i=0;i< countValue;i++)
             {
                  xmlUnlinkNode(NodesValues[i]);
@@ -204,6 +210,7 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
 {
     xmlDoc* docPtr = xmlParseFile(file);
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
+
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
     size_t size=0;
     xmlNodePtr* Nodes = findNodes(result,&size,xpathQuery,xpathCtxPtr);
@@ -211,24 +218,26 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
         strcat(strcat, "Найдено более одного обьекта,повторите запрос");
         return;
     }
-    xmlDocSetRootElement(docPtr,Nodes[0]);
-    xpathCtxPtr = xmlXPathNewContext(docPtr);
+
+
+
     for(size_t i=0;i< cmd->paramCount;i++)
     {
         char xpath[255]={0};
-        strcat(xpath,"/");
-        strcat(xpath,Nodes[0]->name);
+        strcat(xpath,xpathQuery);
         strcat(xpath,"/child::Value[@key=\"");
         strcat(xpath,cmd->keyValueArray[i].key);
         strcat(xpath,"\"]");
-
         size_t countValue;
+
         xmlNodePtr* NodesValues =  findNodes(result,&countValue,xpath,xpathCtxPtr);
         NodesValues[0]->children->content=cmd->keyValueArray[i].value;
 
+        //rootElement->children=&childrenOne;
+        xmlDocSetRootElement(docPtr, rootElement);
+        xmlSaveFormatFile("xml.xml", docPtr, 100);
     }
-    xmlDocSetRootElement(docPtr, rootElement);
-    xmlSaveFormatFile("xml.xml", docPtr, 100);
+
 
 
 }
@@ -269,7 +278,6 @@ void cmdExec(struct command cmd,char* result) {
         char xpath[255] = {0};
         convertToXpath(xpath,cmd.path);
         xpath[strlen(xpath) - 1] = 0;
-
         updateNode(result,"xml.xml", xpath,&cmd);
         free(targetElement);
     }
