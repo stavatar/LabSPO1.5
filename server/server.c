@@ -1,9 +1,11 @@
 #include <sys/socket.h>
 #include "../mt.h"
 #include "./command_api.h"
+#include <unistd.h>
 #define D(...) fprintf(new_stream, __VA_ARGS__)
 
-int main() {
+int main(int argc, char **argv)
+{
     int sock;
     struct sockaddr_in name;
 
@@ -33,6 +35,19 @@ int main() {
     new_stream = fdopen(2, "w");
 
     D("Initializing server...\n");
+    //Создание файла из аргументов строки
+    if(argc >=2) {
+        if(access( argv[1], F_OK ) != 0) {
+            FILE *fp = fopen(argv[1], "w");
+            fprintf(fp, "%s", "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+            fprintf(fp, "%s", "<root></root>");
+            fclose(fp);
+        }
+    } else{
+        D("ERROR. You have not specified a file!\n");
+        return 0;
+    }
+
     new_socket = accept(sock, &cli_addr, &cli_len);
     while (new_socket) {
         D("Client connected.\n");
@@ -62,13 +77,12 @@ int main() {
                     D("\t[%d] Client disconnected.\n", pid);
                     break;
                 }
-                // buf[strcspn(buf, "\n")] = 0; // remove newline symbol
-                D("\t[%d] Command received: %s\n", pid, xmlInput);
-                D("\t[%d] Parsing command.\n", pid);
+               // D("\t[%d] Command received: %s\n", pid, xmlInput);
+               // D("\t[%d] Parsing command.\n", pid);
 
                 char result[MAX_MSG_LENGTH] = {0};
                 struct command cmd = xmlToCmd(xmlInput);
-                cmdExec(cmd,result);
+                cmdExec(cmd,result,argv[1]);
                 strcat(result,"\n>");
                 send(new_socket, result, sizeof(result), MSG_NOSIGNAL);
             }

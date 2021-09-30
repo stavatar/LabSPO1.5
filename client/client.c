@@ -2,6 +2,8 @@
 #include "../util.h"
 #include "./cmd_parser.h"
 #include "../mt.h"
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
 
 void sendQuery(int sock, int pid) {
     struct command cmd;
@@ -39,13 +41,29 @@ void sendQuery(int sock, int pid) {
 	kill(pid, SIGKILL);
 	printf("Goodbye.\n");
 }
+struct message xmlToMsg(const char *text)
+{
+    xmlDoc* docPtr = xmlParseMemory(text, MAX_MSG_LENGTH);
+    xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
+    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//Code", xpathCtxPtr);
+    int code=atoi(xmlNodeCode->nodesetval->nodeTab[0]->children->content);
+    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//Text", xpathCtxPtr);
+    char* textMsg=xmlNodeText->nodesetval->nodeTab[0]->children->content;
+    struct message msg;
+    msg.status=code;
+    msg.info=textMsg;
+    return msg;
 
+}
 void receive(int sock) {
 	char buf[MAX_MSG_LENGTH] = {0};
+    struct message msg;
 	size_t filled = recv(sock, buf, MAX_MSG_LENGTH - 1, 0);
     while (filled) {
 		buf[filled] = '\0';
-		printf("%s", buf);
+        msg = xmlToMsg(buf);
+
+		printf("New Msg:\n  \n New Msg=%s",msg.status);
 
         bzero(buf, sizeof(buf));
 

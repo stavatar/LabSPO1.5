@@ -81,7 +81,6 @@ void XpathForValue(char* xpath,struct command* cmd)
             strcat(xpath,cmd->keyValueArray[i].key);
             strcat(xpath,"\"");
         }
-
     }
     strcat(xpath,"]");
 }
@@ -93,7 +92,7 @@ bool isExistNode(char* xpathQuery, char* targetElement ,xmlXPathContext* xpathCt
     strcat(xpathExist,targetElement);
     xmlNodePtr* xmlNodeTarget = xmlXPathEvalExpression(BAD_CAST xpathExist, xpathCtxPtr)->nodesetval->nodeTab;
 
-    if(xmlNodeTarget[0] != NULL)
+    if(xmlNodeTarget != NULL)
          return TRUE;
     else return  FALSE;
 }
@@ -107,9 +106,10 @@ void save(char* file, char* xpathQuery, char* targetElement, const struct comman
         return;
 
     xmlNodePtr* xmlNodePtr = xmlXPathEvalExpression(BAD_CAST xpathQuery, xpathCtxPtr)->nodesetval->nodeTab;
+
     addNewNode(xmlNodePtr, targetElement, cmd->keyValueArray, cmd->paramCount);
     xmlDocSetRootElement(docPtr, rootElement);
-    xmlSaveFormatFile("xml.xml", docPtr, 100);
+    xmlSaveFormatFile(file, docPtr, 100);
 }
 void createTextResult(char* result,xmlNodePtr* xmlNodesValue,size_t countValue,char* nameParentElement)
 {
@@ -174,6 +174,7 @@ void getNode(char* result,char* file, char* xpathQuery, const struct command* cm
           createTextResult(result,xmlNodesValue,countValue,xmlNodesElement[i]->name);
     }
 
+
 }
 
 
@@ -212,7 +213,7 @@ void deleteNode(char* result,char* file, char* xpathQuery,const struct command* 
             strcat(result,"Значения удалены");
         }
     xmlDocSetRootElement(docPtr, rootElement);
-    xmlSaveFormatFile("xml.xml", docPtr, 100);
+    xmlSaveFormatFile(file, docPtr, 100);
 }
 void updateNode(char* result,char* file, char* xpathQuery,const struct command* cmd)
 {
@@ -236,7 +237,7 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
         size_t countValue;
         xmlNodePtr* NodesValues =  findNodes(result,&countValue,xpath,xpathCtxPtr);
 
-        if( NodesValues[0] != NULL )
+        if( NodesValues != NULL )
             NodesValues[0]->children->content=cmd->keyValueArray[i].value;
         else
         {
@@ -246,9 +247,9 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
 
     }
     xmlDocSetRootElement(docPtr, rootElement);
-    xmlSaveFormatFile("xml.xml", docPtr, 100);
+    xmlSaveFormatFile(file, docPtr, 100);
 }
-void cmdExec(struct command cmd,char* result) {
+void cmdExec(struct command cmd,char* result,char* nameFile) {
 
     if (strcmp(cmd.name, "create") == 0) {
         char* targetElement = malloc(sizeof(char) * 255);
@@ -256,7 +257,7 @@ void cmdExec(struct command cmd,char* result) {
         char xpath[255] = {0};
         preparePath(cmd, targetElement, xpath);
 
-        save("xml.xml", xpath, targetElement, &cmd);
+        save(nameFile, xpath, targetElement, &cmd);
         free(targetElement);
     }
     if (strcmp(cmd.name, "read") == 0)
@@ -265,7 +266,7 @@ void cmdExec(struct command cmd,char* result) {
         char xpath[255] = {0};
         convertToXpath(xpath,cmd.path);
         xpath[strlen(xpath) - 1] = 0;
-        getNode(result,"xml.xml",xpath,&cmd);
+        getNode(result,nameFile,xpath,&cmd);
         free(targetElement);
     }
     if (strcmp(cmd.name, "delete") == 0)
@@ -275,7 +276,7 @@ void cmdExec(struct command cmd,char* result) {
         convertToXpath(xpath,cmd.path);
         xpath[strlen(xpath) - 1] = 0;
 
-        deleteNode(result,"xml.xml", xpath,&cmd);
+        deleteNode(result,nameFile, xpath,&cmd);
 
         free(targetElement);
     }
@@ -285,7 +286,7 @@ void cmdExec(struct command cmd,char* result) {
         char xpath[255] = {0};
         convertToXpath(xpath,cmd.path);
         xpath[strlen(xpath) - 1] = 0;
-        updateNode(result,"xml.xml", xpath,&cmd);
+        updateNode(result,nameFile, xpath,&cmd);
         free(targetElement);
     }
 }
