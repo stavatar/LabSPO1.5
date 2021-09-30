@@ -65,17 +65,7 @@ void addNewNode(xmlNodePtr* targetNode, char* nameEl, struct keyValue* param, si
     xmlAddChild(targetNode[0], newNode);
 }
 
-void save(char* file, char* xpathQuery, char* targetElement, const struct command* cmd) {
-    xmlDoc* docPtr = xmlParseFile(file);
-    xmlNode* rootElement = xmlDocGetRootElement(docPtr);
-    xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
-    xmlNodePtr* xmlNodePtr = xmlXPathEvalExpression(BAD_CAST xpathQuery, xpathCtxPtr)->nodesetval->nodeTab;
-
-    addNewNode(xmlNodePtr, targetElement, cmd->keyValueArray, cmd->paramCount);
-    xmlDocSetRootElement(docPtr, rootElement);
-    xmlSaveFormatFile("xml.xml", docPtr, 100);
-}
 void XpathForValue(char* xpath,struct command* cmd)
 {
     strcat(xpath,"/child::Value");
@@ -95,7 +85,32 @@ void XpathForValue(char* xpath,struct command* cmd)
     }
     strcat(xpath,"]");
 }
+bool isExistNode(char* xpathQuery, char* targetElement ,xmlXPathContext* xpathCtxPtr)
+{
+    char xpathExist[255]= {0};
+    strcat(xpathExist,xpathQuery);
+    strcat(xpathExist,"/");
+    strcat(xpathExist,targetElement);
+    xmlNodePtr* xmlNodeTarget = xmlXPathEvalExpression(BAD_CAST xpathExist, xpathCtxPtr)->nodesetval->nodeTab;
 
+    if(xmlNodeTarget[0] != NULL)
+         return TRUE;
+    else return  FALSE;
+}
+void save(char* file, char* xpathQuery, char* targetElement, const struct command* cmd) {
+    xmlDoc* docPtr = xmlParseFile(file);
+    xmlNode* rootElement = xmlDocGetRootElement(docPtr);
+    xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
+
+    //Проверка на существование добавляемого элемента
+    if( isExistNode( xpathQuery, targetElement , xpathCtxPtr ))
+        return;
+
+    xmlNodePtr* xmlNodePtr = xmlXPathEvalExpression(BAD_CAST xpathQuery, xpathCtxPtr)->nodesetval->nodeTab;
+    addNewNode(xmlNodePtr, targetElement, cmd->keyValueArray, cmd->paramCount);
+    xmlDocSetRootElement(docPtr, rootElement);
+    xmlSaveFormatFile("xml.xml", docPtr, 100);
+}
 void createTextResult(char* result,xmlNodePtr* xmlNodesValue,size_t countValue,char* nameParentElement)
 {
     strcat(result,"\nName Element:");
@@ -105,8 +120,6 @@ void createTextResult(char* result,xmlNodePtr* xmlNodesValue,size_t countValue,c
     {
         xmlNodePtr  properties=xmlNodesValue[i]->properties;
         xmlNodePtr childrenTwo=properties->children;
-
-
         xmlNodePtr value=xmlNodesValue[i]->children;
         strcat(result, "key:");
         strcat(result,childrenTwo->content);
@@ -172,12 +185,11 @@ void deleteNode(char* result,char* file, char* xpathQuery,const struct command* 
     xmlNodePtr* nodes = findNodes(result, &size, xpathQuery, xpathCtxPtr);
     if(nodes == NULL)
         return;
-
     if(size>1) {
         strcat(strcat, "Найдено более одного обьекта,повторите запрос");
         return;
     }
-    if(cmd->paramCount==0)
+    if( cmd->paramCount == 0 )
         {
             xmlUnlinkNode(nodes[0]);
             xmlFreeNode(nodes[0]);
@@ -188,8 +200,6 @@ void deleteNode(char* result,char* file, char* xpathQuery,const struct command* 
             char xpath[255]={0};
             strcat(xpath,xpathQuery);
             XpathForValue(xpath,cmd);
-            //xmlDocSetRootElement(docPtr, nodes[0]);
-            //xpathCtxPtr = xmlXPathNewContext(docPtr);
             size_t countValue;
             xmlNodePtr* NodesValues =  findNodes(result,&countValue,xpath,xpathCtxPtr);
             if(NodesValues == NULL)
@@ -200,9 +210,7 @@ void deleteNode(char* result,char* file, char* xpathQuery,const struct command* 
                 xmlFreeNode(NodesValues[i]);
             }
             strcat(result,"Значения удалены");
-
         }
-
     xmlDocSetRootElement(docPtr, rootElement);
     xmlSaveFormatFile("xml.xml", docPtr, 100);
 }
@@ -210,17 +218,14 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
 {
     xmlDoc* docPtr = xmlParseFile(file);
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
-
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
+
     size_t size=0;
     xmlNodePtr* Nodes = findNodes(result,&size,xpathQuery,xpathCtxPtr);
-    if(size>1) {
+    if(size > 1) {
         strcat(strcat, "Найдено более одного обьекта,повторите запрос");
         return;
     }
-
-
-
     for(size_t i=0;i< cmd->paramCount;i++)
     {
         char xpath[255]={0};
@@ -229,17 +234,19 @@ void updateNode(char* result,char* file, char* xpathQuery,const struct command* 
         strcat(xpath,cmd->keyValueArray[i].key);
         strcat(xpath,"\"]");
         size_t countValue;
-
         xmlNodePtr* NodesValues =  findNodes(result,&countValue,xpath,xpathCtxPtr);
-        NodesValues[0]->children->content=cmd->keyValueArray[i].value;
 
-        //rootElement->children=&childrenOne;
-        xmlDocSetRootElement(docPtr, rootElement);
-        xmlSaveFormatFile("xml.xml", docPtr, 100);
+        if( NodesValues[0] != NULL )
+            NodesValues[0]->children->content=cmd->keyValueArray[i].value;
+        else
+        {
+            xmlNodePtr ValueNode = xmlNewTextChild(Nodes[0], NULL, BAD_CAST "Value", BAD_CAST cmd->keyValueArray[i].value);
+            xmlNewProp(ValueNode, BAD_CAST "key", BAD_CAST cmd->keyValueArray[i].key);
+        }
+
     }
-
-
-
+    xmlDocSetRootElement(docPtr, rootElement);
+    xmlSaveFormatFile("xml.xml", docPtr, 100);
 }
 void cmdExec(struct command cmd,char* result) {
 

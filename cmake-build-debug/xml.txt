@@ -1,1 +1,1 @@
-<?xml version="1.0"?><Command><Name>delete</Name><Path>k.b</Path><Value key="rr"></Value></Command>
+<?xml version="1.0"?><Command><Name>create</Name><Path>$.a.b</Path><Value key="g">5</Value></Command>

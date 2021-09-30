@@ -31,7 +31,6 @@ int main() {
     if (new_fd)
         printError("dup");
     new_stream = fdopen(2, "w");
-    //setbuf(new_stream, NULL); // sin buffering
 
     D("Initializing server...\n");
     new_socket = accept(sock, &cli_addr, &cli_len);
