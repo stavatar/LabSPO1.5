@@ -9,6 +9,7 @@
 #include "../mt.h"
 #include <stdbool.h>
 
+
 struct command xmlToCmd(char* xmlInput);
 void msgToXml(struct message msg, char* result);
 char* convertToXpath(char* xpath, char* path);
@@ -17,10 +18,16 @@ void xpathForValue(char* xpath, const struct command* cmd);
 void createTextResult(struct message* result, xmlNodePtr* xmlNodesValue, size_t paramCount, char* parentName);
 struct foundNodes findNodes(const char* xpathQuery, xmlXPathContext* xpathCtxPtr);
 bool isExistFullPath(const char* xpathQuery, const char* newElementName ,xmlXPathContext* xpathCtxPtr);
+void saveNodeToFile(char* file,xmlNodePtr rootNode);
+xmlDoc* readNodeFromFile(char* file);
 
 struct foundNodes {
     size_t count;
     xmlNodePtr* targetNodes;
 };
 
+struct dataBinFile
+{
+    char* buf;
+};
 #endif //SPO_CMD_UTIL_H

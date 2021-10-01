@@ -133,3 +133,24 @@ bool isExistFullPath(const char* xpathQuery, const char* newElementName ,xmlXPat
 
     return (xmlNodeTarget == NULL) ? FALSE : TRUE;
 }
+
+xmlDoc* readNodeFromFile(char* file)
+{
+    struct dataBinFile dataBinary;
+    FILE * fp= fopen(file,"rb");
+    fread(&dataBinary,sizeof(struct dataBinFile),1,fp);
+    fclose(fp);
+    xmlDoc* docPtr = xmlParseMemory(dataBinary.buf,strlen(dataBinary.buf));
+    return docPtr;
+}
+
+void saveNodeToFile(char* file,xmlNodePtr rootNode)
+{
+    struct dataBinFile dataBinary;
+    xmlBufferPtr buf = xmlBufferCreate();
+    xmlNodeDump(buf, NULL, rootNode, 1,1);
+    dataBinary.buf=(char*)buf->content;
+    FILE * fp= fopen(file,"wb");
+    fwrite(&dataBinary,sizeof(struct dataBinFile),1,fp);
+    fclose(fp);
+}
