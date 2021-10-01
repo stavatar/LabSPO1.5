@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
         printError("Socket in not created");
 
 	struct in_addr server_addr;
-	if (!inet_aton(LOCALHOST, &server_addr))
+	if (!inet_aton(DEBUG_IP, &server_addr))
         printError("Error: inet_aton");
 
 	struct sockaddr_in connection;

@@ -1,8 +1,7 @@
 #include "command_api.h"
 
 struct message createNode(const char* file, const char* xpathQuery, const char* newElementName, const struct command* cmd) {
-    //xmlDoc* docPtr = xmlParseFile(file);
-    xmlDoc* docPtr=readNodeFromFile(file);
+    xmlDoc* docPtr = xmlParseFile(file);
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
@@ -27,9 +26,8 @@ struct message createNode(const char* file, const char* xpathQuery, const char* 
 
             xmlAddChild(foundTargetNodes.targetNodes[0], newNode);
 
-            //xmlDocSetRootElement(docPtr, rootElement);
-            //xmlSaveFormatFile(file, docPtr, 100);
-            saveNodeToFile(file,rootElement);
+            xmlDocSetRootElement(docPtr, rootElement);
+            xmlSaveFormatFile(file, docPtr, 100);
         }
     }
     return (struct message) {.status = 1, .info = "Element is created"};
@@ -38,8 +36,7 @@ struct message createNode(const char* file, const char* xpathQuery, const char* 
 struct message readNode(const char* file, const char* xpathQuery, const struct command* cmd) {
     struct message result;
 
-    //xmlDoc* docPtr = xmlParseFile(file);
-    xmlDoc* docPtr=readNodeFromFile(file);
+    xmlDoc* docPtr = xmlParseFile(file);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
     struct foundNodes foundTargetNodes = findNodes(xpathQuery, xpathCtxPtr);
@@ -76,8 +73,7 @@ struct message readNode(const char* file, const char* xpathQuery, const struct c
 }
 
 struct message deleteNode(const char* file, const char* xpathQuery, const struct command* cmd) {
-    //xmlDoc* docPtr = xmlParseFile(file);
-    xmlDoc* docPtr=readNodeFromFile(file);
+    xmlDoc* docPtr = xmlParseFile(file);
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
@@ -94,9 +90,8 @@ struct message deleteNode(const char* file, const char* xpathQuery, const struct
             xmlUnlinkNode(foundTargetNodes.targetNodes[0]);
             xmlFreeNode(foundTargetNodes.targetNodes[0]);
 
-            //xmlDocSetRootElement(docPtr, rootElement);
-            //xmlSaveFormatFile(file, docPtr, 100);
-            saveNodeToFile(file,rootElement);
+            xmlDocSetRootElement(docPtr, rootElement);
+            xmlSaveFormatFile(file, docPtr, 100);
             return (struct message) {.status = 1, .info = "Element is deleted"};
         } else {
             char xpath[255] = {0};
@@ -115,16 +110,14 @@ struct message deleteNode(const char* file, const char* xpathQuery, const struct
 
         }
 
-       // xmlDocSetRootElement(docPtr, rootElement);
-        //xmlSaveFormatFile(file, docPtr, 100);
-        saveNodeToFile(file,rootElement);
+        xmlDocSetRootElement(docPtr, rootElement);
+        xmlSaveFormatFile(file, docPtr, 100);
         return (struct message) {.status = 1, .info = "Parameters are deleted"};
     }
 }
 
 struct message updateNode(const char* file, const char* xpathQuery, const struct command* cmd) {
-    //xmlDoc* docPtr = xmlParseFile(file);
-    xmlDoc* docPtr=readNodeFromFile(file);
+    xmlDoc* docPtr = xmlParseFile(file);
     xmlNode* rootElement = xmlDocGetRootElement(docPtr);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
@@ -152,9 +145,8 @@ struct message updateNode(const char* file, const char* xpathQuery, const struct
             }
         }
 
-        //xmlDocSetRootElement(docPtr, rootElement);
-        //xmlSaveFormatFile("xml.xml", docPtr, 100);
-        saveNodeToFile(file,rootElement);
+        xmlDocSetRootElement(docPtr, rootElement);
+        xmlSaveFormatFile("xml.xml", docPtr, 100);
         return (struct message) {.status = 1, .info = "Parameters are updated"};
     }
 }

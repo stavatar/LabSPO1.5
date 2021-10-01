@@ -9,15 +9,9 @@ int main(int argc, char* argv[]) {
     if (argc >= 3) {
         port = (int) strtol(argv[1], NULL, 10);
         if (access( argv[2], F_OK) != 0) {
-            FILE *fp = fopen(argv[2], "wb");
-            char textInit[100];
-            strcat(textInit,"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-            strcat(textInit,"<root></root>");
-            struct dataBinFile data;
-            data.buf=textInit;
-            fwrite(&data, sizeof(struct dataBinFile), 1, fp);
-            //fprintf(fp, "%s", "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-            //fprintf(fp, "%s", "<root></root>");
+            FILE *fp = fopen(argv[2], "w");
+            fprintf(fp, "%s", "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+            fprintf(fp, "%s", "<root></root>");
             fclose(fp);
         }
     } else {
