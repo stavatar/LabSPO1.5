@@ -1,4 +1,0 @@
-C:\WINDOWS\system32\wsl.exe --distribution Ubuntu --exec /bin/sh -c "export CLION_IDE=TRUE && export JETBRAINS_IDE=TRUE && cd /home/stavatar/project/spo1.5v2/cmake-build-debug && /usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G 'CodeBlocks - Unix Makefiles' /home/stavatar/project/spo1.5v2"
--- Configuring done
--- Generating done
--- Build files have been written to: /home/stavatar/project/spo1.5v2/cmake-build-debug
