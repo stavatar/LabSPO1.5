@@ -1,60 +1,48 @@
 #include <sys/socket.h>
 #include "../mt.h"
 #include "./command_api.h"
-#include <unistd.h>
-#define D(...) fprintf(new_stream, __VA_ARGS__)
 
-int main(int argc, char **argv)
-{
-    int sock;
-    struct sockaddr_in name;
+int main(int argc, char* argv[]) {
+    int sock, port;
+    int optval = 1;
+
+    if (argc >= 3) {
+        port = (int) strtol(argv[1], NULL, 10);
+        if (access( argv[2], F_OK) != 0) {
+            FILE *fp = fopen(argv[2], "w");
+            fprintf(fp, "%s", "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+            fprintf(fp, "%s", "<root></root>");
+            fclose(fp);
+        }
+    } else {
+        printError("Invalid arguments: server [PORT] [FILE_PATH]");
+    }
+
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
         printError("opening socket");
 
-    int optval = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
 
+    struct sockaddr_in name;
     name.sin_family = AF_INET;
     name.sin_addr.s_addr = INADDR_ANY;
-    name.sin_port = htons(PORT);
+    name.sin_port = htons(port);
+
     if (bind(sock, (void *) &name, sizeof(name)))
-        printError("binding tcp socket");
+        printError("Binding tcp socket");
     if (listen(sock, 1) == -1)
         printError("listen");
 
-    struct sockaddr cli_addr;
-    socklen_t cli_len = sizeof(cli_addr);
-    int new_socket, new_fd, pid;
-    FILE *new_stream;
+    struct sockaddr clientAddr;
+    socklen_t clientLen = sizeof(clientAddr);
+    int new_socket, pid;
 
-    new_fd = dup(STDERR_FILENO) == -1;
-    if (new_fd)
-        printError("dup");
-    new_stream = fdopen(2, "w");
-
-    D("Initializing server...\n");
-    //Создание файла из аргументов строки
-    if(argc >=2) {
-        if(access( argv[1], F_OK ) != 0) {
-            FILE *fp = fopen(argv[1], "w");
-            fprintf(fp, "%s", "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-            fprintf(fp, "%s", "<root></root>");
-            fclose(fp);
-        }
-    } else{
-        D("ERROR. You have not specified a file!\n");
-        return 0;
-    }
-
-    new_socket = accept(sock, &cli_addr, &cli_len);
+    new_socket = accept(sock, &clientAddr, &clientLen);
     while (new_socket) {
-        D("Client connected.\n");
         pid = fork();
-        if (pid) D("child pid = %d.\n", pid);
-        else {
-            pid = getpid();
+        if (!pid) {
             if (new_socket < 0)
                 printError("accept");
             if (dup2(new_socket, STDOUT_FILENO) == -1)
@@ -74,44 +62,25 @@ int main(int argc, char **argv)
                         break;
                 }
                 if (!readc) {
-                    D("\t[%d] Client disconnected.\n", pid);
                     break;
                 }
-               // D("\t[%d] Command received: %s\n", pid, xmlInput);
-               // D("\t[%d] Parsing command.\n", pid);
 
-                char result[MAX_MSG_LENGTH] = {0};
                 struct command cmd = xmlToCmd(xmlInput);
-                cmdExec(cmd,result,argv[1]);
-                strcat(result,"\n>");
-                send(new_socket, result, sizeof(result), MSG_NOSIGNAL);
+
+                struct message result = cmdExec(cmd, argv[2]);
+
+                char response[MAX_MSG_LENGTH] = {0};
+
+                msgToXml(result, response);
+
+                send(new_socket, response, strlen(response), MSG_NOSIGNAL);
+                free(cmd.keyValueArray);
             }
             close(new_socket);
-            D("\t[%d] Dying.\n", pid);
             exit(0);
         }
-        new_socket = accept(sock, &cli_addr, &cli_len);
+        new_socket = accept(sock, &clientAddr, &clientLen);
     }
-    fclose(new_stream);
     close(sock);
     return 0;
 }
-
-// CREATE:
-// Добавить новый параметр существующему элементу
-// существует $.a.b[g=5], надо добавить параметр h=10
-// create $.a.b[h=10]
-// create $.a b[h=10]
-
-// READ:
-// Если путь относительный - возвращать первый или весь список ???
-// read a.b[g,h]
-// read $.a.b
-
-// UPDATE:
-// Если указан ключ, которого нет - возвращаем сообщение об ошибке
-// update $.a.b[h=10]
-
-// DELETE:
-// delete $.a.b
-// delete $.a.b[g]

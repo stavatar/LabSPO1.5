@@ -1,6 +1,17 @@
 #include <ctype.h>
 #include "cmd_parser.h"
 
+struct message xmlToMsg(const char *text) {
+    xmlDoc* docPtr = xmlParseMemory(text, MAX_MSG_LENGTH);
+    xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
+    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//Code", xpathCtxPtr);
+    int status = (int) strtol((char*) xmlNodeCode->nodesetval->nodeTab[0]->children->content, NULL, 10);
+    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//Text", xpathCtxPtr);
+    char* info = (char*) xmlNodeText->nodesetval->nodeTab[0]->children->content;
+
+    return (struct message) {.status = status, .info = info};
+}
+
 void initCmd(char* values, struct command* cmd) {
     char* params[64];
     size_t paramCount;
@@ -34,11 +45,7 @@ struct command parseInputCmd(char* strCmd) {
     char* values1 = strtok(NULL,"]");
     char* values2 = strtok(values1,"\n");
     initCmd(values2, &cmd);
-    if(cmd.name==NULL||cmd.path==NULL)
-    {
-        strCmd=NULL ;
-        return cmd;
-    }
+
     toLowerCase(cmd.name, strlen(cmd.name));
     toLowerCase(cmd.path, strlen(cmd.path));
 
@@ -57,7 +64,7 @@ void cmdToXml(const struct command cmd, char* const outputXml) {
         strcat(outputXml, "<Value key=\"");
         strcat(outputXml, cmd.keyValueArray[i].key);
         strcat(outputXml, "\">");
-        if(cmd.keyValueArray[i].value!=NULL)
+        if (cmd.keyValueArray[i].value != NULL)
             strcat(outputXml, cmd.keyValueArray[i].value);
         strcat(outputXml, "</Value>");
     }

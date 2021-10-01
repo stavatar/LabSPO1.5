@@ -10,20 +10,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 #include <signal.h>
 
-#define PORT 5558
 #define MAX_MSG_LENGTH 1024
-#define END_STRING "chau" 
-
-#define HOST "127.0.0.1"
+#define LOCALHOST "127.0.0.1"
+#define DEBUG_IP "172.18.0.1"
 
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL SO_NOSIGPIPE
 #endif
 
-#define printError(x) { fprintf(stderr, "%s:%d: %s: %s\n", __FILE__, __LINE__, x, strerror(errno)); exit(1);}
+#define printError(x) { fprintf(stderr, "%s\n", x); exit(1);}
 
 
 

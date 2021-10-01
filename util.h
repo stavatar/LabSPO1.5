@@ -2,7 +2,9 @@
 
 #ifndef SPO_NOW_UTIL_H
 #define SPO_NOW_UTIL_H
-#include <string.h>
+
+#define ROOT_NODE "root"
+
 struct keyValue {
     char* key;
     char* value;
@@ -14,9 +16,10 @@ struct command {
     struct keyValue* keyValueArray;
     size_t paramCount;
 };
+
 struct message {
     int status;
     char* info;
 };
-void createXML(result,msg);
+
 #endif
