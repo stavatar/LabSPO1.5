@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include "cmd_parser.h"
 
+// xml => struct message
 struct message xmlToMsg(const char *text) {
     xmlDoc* docPtr = xmlParseMemory(text, MAX_MSG_LENGTH);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
@@ -12,6 +13,13 @@ struct message xmlToMsg(const char *text) {
     return (struct message) {.status = status, .info = info};
 }
 
+void toLowerCase(char* str, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        str[i] = (char) tolower(str[i]);
+    }
+}
+
+// adds parameters into struct command
 void initCmd(char* values, struct command* cmd) {
     char* params[64];
     size_t paramCount;
@@ -27,12 +35,6 @@ void initCmd(char* values, struct command* cmd) {
         cmd->keyValueArray[i].key = strtok(params[i], "=");
         cmd->keyValueArray[i].value = strtok(NULL, "=");
 
-    }
-}
-
-void toLowerCase(char* str, size_t size) {
-    for (size_t i = 0; i < size; i++) {
-        str[i] = (char) tolower(str[i]);
     }
 }
 
@@ -52,6 +54,7 @@ struct command parseInputCmd(char* strCmd) {
     return cmd;
 }
 
+// struct command => xml
 void cmdToXml(const struct command cmd, char* const outputXml) {
     strcat(outputXml, "<Command>");
     strcat(outputXml, "<Name>");

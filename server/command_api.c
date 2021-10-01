@@ -63,6 +63,7 @@ struct message readNode(const char* file, const char* xpathQuery, const struct c
             isAtLeastOneParamFound = TRUE;
         }
     }
+
     if (isAtLeastOneParamFound) {
         result.status = 1;
     } else {

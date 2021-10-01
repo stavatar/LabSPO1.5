@@ -1,10 +1,12 @@
 #include "cmd_util.h"
 
+// struct message => xml
 void msgToXml(struct message msg, char* result) {
+    char statusStr[2] = {0};
     strcat(result,"<Message>");
     strcat(result,"<Code>");
-
-    char statusStr[2] = {0};
+    // этот костыль здесь потому, что строка ниже приводит к изменению msg.info
+    // snprintf(result + strlen(result), 2, "%d", msg.status);
     switch (msg.status) {
         case 0:
             strcat(statusStr, "0");
@@ -21,6 +23,7 @@ void msgToXml(struct message msg, char* result) {
     strcat(result,"</Message>");
 }
 
+// xml => struct command
 struct command xmlToCmd(char* xmlInput) {
     struct command cmd;
 
@@ -42,6 +45,7 @@ struct command xmlToCmd(char* xmlInput) {
     return cmd;
 }
 
+// $ is absolute path, handles this case
 void replaceFirstNode(char* firstNode, char* xpath) {
     if (strcmp(firstNode, "$") == 0) {
         strcat(xpath, "/");
@@ -52,6 +56,7 @@ void replaceFirstNode(char* firstNode, char* xpath) {
     }
 }
 
+// makes xpath query from command path received from user
 char* convertToXpath(char* xpath, char* path) {
     char* prevNode = NULL;
     char* currNode = strtok(path,".");
@@ -69,16 +74,16 @@ char* convertToXpath(char* xpath, char* path) {
     return prevNode;
 }
 
-// Анализ пути - вычленение пути и добавляемого элемента и создание Xpath-запроса
+// for "create" command
+// wrapper over convertToXpath()
 void preparePath(struct command cmd, char* newElementName, char* xpath) {
     char* prevNode = convertToXpath(xpath, cmd.path);
     strcpy(newElementName, prevNode);
     xpath[strlen(xpath) - strlen(prevNode) - 2] = 0;
 }
 
-// Составляет xpath-запрос для поиска параметров по ключу
+// make xpath query for parameters search
 void xpathForValue(char* xpath, const struct command* cmd) {
-
     strcat(xpath,"/child::Value");
     strcat(xpath,"[@key");
     if (cmd->paramCount > 0) {
@@ -94,6 +99,8 @@ void xpathForValue(char* xpath, const struct command* cmd) {
     strcat(xpath,"]");
 }
 
+// for "read" command
+// make response string
 void createTextResult(struct message* result, xmlNodePtr* xmlNodesValue, size_t paramCount, char* parentName) {
     char resultBuf[MAX_MSG_LENGTH] = {0};
 
@@ -113,6 +120,7 @@ void createTextResult(struct message* result, xmlNodePtr* xmlNodesValue, size_t 
     result->info = resultBuf;
 }
 
+// finds an array of nodes by xpath
 struct foundNodes findNodes(const char* xpathQuery, xmlXPathContext* xpathCtxPtr) {
     struct foundNodes foundNodes = {.count = 0, .targetNodes = NULL};
     xmlNodeSet* foundNodeSetPtr = xmlXPathEvalExpression(BAD_CAST xpathQuery, xpathCtxPtr)->nodesetval;
@@ -124,6 +132,8 @@ struct foundNodes findNodes(const char* xpathQuery, xmlXPathContext* xpathCtxPtr
     return foundNodes;
 }
 
+// for "create" command
+// checks if the (target path + new element path) exists
 bool isExistFullPath(const char* xpathQuery, const char* newElementName ,xmlXPathContext* xpathCtxPtr) {
     char xpath[255] = {0};
     strcat(xpath, xpathQuery);
