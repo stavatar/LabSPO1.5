@@ -5,9 +5,11 @@
 struct message xmlToMsg(const char *text) {
     xmlDoc* docPtr = xmlParseMemory(text, MAX_MSG_LENGTH);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
-    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//Code", xpathCtxPtr);
+
+    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//status", xpathCtxPtr);
     int status = (int) strtol((char*) xmlNodeCode->nodesetval->nodeTab[0]->children->content, NULL, 10);
-    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//Text", xpathCtxPtr);
+
+    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//info", xpathCtxPtr);
     char* info = (char*) xmlNodeText->nodesetval->nodeTab[0]->children->content;
 
     return (struct message) {.status = status, .info = info};
@@ -56,7 +58,7 @@ struct command parseInputCmd(char* strCmd) {
 
 // struct command => xml
 void cmdToXml(const struct command cmd, char* const outputXml) {
-    strcat(outputXml, "<Command>");
+    strcat(outputXml, "<command>");
     strcat(outputXml, "<Name>");
     strcat(outputXml, cmd.name);
     strcat(outputXml, "</Name>");
@@ -71,7 +73,7 @@ void cmdToXml(const struct command cmd, char* const outputXml) {
             strcat(outputXml, cmd.keyValueArray[i].value);
         strcat(outputXml, "</Value>");
     }
-    strcat(outputXml, "</Command>");
+    strcat(outputXml, "</command>");
 }
 
 void readCmd(char* inputCmd, size_t size) {

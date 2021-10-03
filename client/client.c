@@ -1,10 +1,15 @@
-﻿#include "../mt.h"
+﻿#include <sys/socket.h>
+#include <signal.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
 #include "../util.h"
-#include "./cmd_parser.h"
 #include "../mt.h"
+#include "../command_api.h"
+#include "cmd_parser.h"
 
 void sendQuery(int sock, int pid) {
-    struct command cmd;
+    struct command command;
     char* outputXml = malloc(sizeof(char) * MAX_MSG_LENGTH);
     while (outputXml != NULL) {
         char inputCmd[MAX_MSG_LENGTH];
@@ -13,9 +18,9 @@ void sendQuery(int sock, int pid) {
         if (strcmp(inputCmd,"\n") == 0)
             continue;
 
-        cmd = parseInputCmd(inputCmd);
+        command = parseInputCmd(inputCmd);
 
-        cmdToXml(cmd, outputXml);
+        cmdToXml(command, outputXml);
 
         if (send(sock, outputXml, strlen(outputXml)+1, 0) < 0)
             printError("Error while sending request");
@@ -23,7 +28,7 @@ void sendQuery(int sock, int pid) {
         outputXml[0] = 0;
     }
 
-    free(cmd.keyValueArray);
+    free(command.keyValueArray);
     free(outputXml);
 	kill(pid, SIGKILL);
 	printf("Disconnected\n");
