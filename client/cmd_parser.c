@@ -24,7 +24,7 @@ void toLowerCase(char* str, size_t size) {
 // adds parameters into struct command
 struct message* inputToCommand(char* strCmd, struct command* cmd) {
     struct message* msg = malloc( sizeof(*msg));
-
+    toLowerCase(strCmd, strlen(strCmd));
     char* name = strtok(strCmd," ");
     if (strcmp(name,"create") == 0)
         cmd->apiAction = COMMAND_CREATE;
@@ -42,6 +42,14 @@ struct message* inputToCommand(char* strCmd, struct command* cmd) {
     bool isNameRead = (cmd->apiAction == COMMAND_READ);
 
     char* other = strtok(NULL,"\n");
+    bool isUseReservedSym = (strstr( other,"$" ) != NULL)&& (cmd->apiAction != COMMAND_READ);
+    if(isUseReservedSym){
+        msg->info = "cannton use $ in command CREATE , UPDATE and DELETE";
+        msg->status = 0;
+        return msg;
+
+    }
+   
     bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
     if ( !isExistPath ) {
         msg->info = "missing path";
