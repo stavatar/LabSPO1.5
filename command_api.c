@@ -113,13 +113,13 @@ void freeCommand(struct command* command) {
 }
 
 // Переделать используя libxml !!!
-char* responseToString(struct response* response) {
+char* responseToString(struct message* response) {
     char* responseStr = malloc(sizeof(char) * MAX_MSG_LENGTH);
 
     char statusStr[2] = {0};
-    strcat(responseStr,"<response>");
+    strcat(responseStr,"<message>");
     strcat(responseStr,"<status>");
-    // этот костыль здесь потому, что строка ниже приводит к изменению response->info
+    // этот костыль здесь потому, что строка ниже приводит к изменению message->info
     // snprintf(result + strlen(result), 2, "%d", msg.status);
     switch (response->status) {
         case 0:
@@ -134,7 +134,7 @@ char* responseToString(struct response* response) {
     strcat(responseStr,"<info>");
     strcat(responseStr, response->info);
     strcat(responseStr,"</info>");
-    strcat(responseStr,"</response>");
+    strcat(responseStr,"</message>");
 
     return responseStr;
 }

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 /*
- * Request/response structure
+ * Request/message structure
  *
  * ======= command "create" =======
  *  <name> create </name>
@@ -72,7 +72,7 @@ struct command {
     };
 };
 
-struct response {
+struct message {
     int status;
     char* info;
 };
@@ -83,4 +83,4 @@ void freeStringArray(char** path);
 struct command* xmlToStruct(char* xml, char* rootPath);
 void freeCommand(struct command* command);
 
-char* responseToString(struct response* response);
+char* responseToString(struct message* response);

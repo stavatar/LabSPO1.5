@@ -9,7 +9,7 @@
 #include "cmd_parser.h"
 
 void sendQuery(int sock, int pid) {
-    struct command command;
+    struct command cmd;
     char* outputXml = malloc(sizeof(char) * MAX_MSG_LENGTH);
     while (outputXml != NULL) {
         char inputCmd[MAX_MSG_LENGTH];
@@ -18,9 +18,14 @@ void sendQuery(int sock, int pid) {
         if (strcmp(inputCmd,"\n") == 0)
             continue;
 
-        command = parseInputCmd(inputCmd);
 
-        cmdToXml(command, outputXml);
+        struct message* msg = inputToCommand(inputCmd,&cmd);
+        if(msg->status == 0) {
+            printf("Syntax error : %s \n ",msg->info);
+            free(msg);
+            continue;
+        }
+        cmdToXml(cmd,outputXml);
 
         if (send(sock, outputXml, strlen(outputXml)+1, 0) < 0)
             printError("Error while sending request");
@@ -28,7 +33,7 @@ void sendQuery(int sock, int pid) {
         outputXml[0] = 0;
     }
 
-    free(command.keyValueArray);
+
     free(outputXml);
 	kill(pid, SIGKILL);
 	printf("Disconnected\n");

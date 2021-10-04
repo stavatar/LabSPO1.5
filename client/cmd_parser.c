@@ -22,58 +22,139 @@ void toLowerCase(char* str, size_t size) {
 }
 
 // adds parameters into struct command
-void initCmd(char* values, struct command* cmd) {
-    char* params[64];
-    size_t paramCount;
+struct message* inputToCommand(char* strCmd,struct command* cmd)
+{
+    struct message* msg = malloc( sizeof(*msg));
 
-    params[0] = strtok(values,",");
-    for (paramCount = 1; params[paramCount-1] != NULL; paramCount++) {
-        params[paramCount] = strtok(NULL, ",");
+    char* name = strtok(strCmd," ");
+    if(strcmp(name,"create")==0)
+        cmd->apiAction = COMMAND_CREATE;
+    else  if(strcmp(name,"update")==0)
+        cmd->apiAction = COMMAND_UPDATE;
+    else  if(strcmp(name,"read")==0)
+        cmd->apiAction = COMMAND_READ;
+    else  if(strcmp(name,"delete")==0)
+        cmd->apiAction = COMMAND_DELETE;
+    else {
+        msg->info = "wrong name command written";
+        msg->status = 0;
+        return msg;
     }
-    cmd->paramCount = --paramCount;
+    bool isNameRead = (cmd->apiAction == COMMAND_READ);
 
-    cmd->keyValueArray = malloc(sizeof(struct keyValue) * paramCount);
-    for (size_t i = 0; i < paramCount; i++) {
-        cmd->keyValueArray[i].key = strtok(params[i], "=");
-        cmd->keyValueArray[i].value = strtok(NULL, "=");
 
-    }
-}
-
-struct command parseInputCmd(char* strCmd) {
-    struct command cmd;
-
-    cmd.name = strtok(strCmd," ");
     char* other = strtok(NULL,"\n");
-    cmd.path = strtok(other,"[");
-    char* values1 = strtok(NULL,"]");
-    char* values2 = strtok(values1,"\n");
-    initCmd(values2, &cmd);
-
-    toLowerCase(cmd.name, strlen(cmd.name));
-    toLowerCase(cmd.path, strlen(cmd.path));
-
-    return cmd;
-}
-
-// struct command => xml
-void cmdToXml(const struct command cmd, char* const outputXml) {
-    strcat(outputXml, "<command>");
-    strcat(outputXml, "<Name>");
-    strcat(outputXml, cmd.name);
-    strcat(outputXml, "</Name>");
-    strcat(outputXml, "<Path>");
-    strcat(outputXml, cmd.path);
-    strcat(outputXml, "</Path>");
-    for (int i = 0; i < cmd.paramCount; i++) {
-        strcat(outputXml, "<Value key=\"");
-        strcat(outputXml, cmd.keyValueArray[i].key);
-        strcat(outputXml, "\">");
-        if (cmd.keyValueArray[i].value != NULL)
-            strcat(outputXml, cmd.keyValueArray[i].value);
-        strcat(outputXml, "</Value>");
+    bool isExistPath = (other != NULL) && ((( strcspn( other, "[" )) > 0)||(isNameRead));
+    if ( !isExistPath ) {
+        msg->info = "missing path";
+        msg->status = 0;
+        return msg;
     }
-    strcat(outputXml, "</command>");
+
+
+    bool isExistOpenBracket = (strstr( other,"[" ) != NULL);
+    bool isExistEndBracket  = other[strlen(other) - 1] == ']';
+
+    if(!isNameRead){
+        if( !isExistOpenBracket &&  isExistEndBracket){
+            msg->info = "missing opening bracket";
+            msg->status = 0;
+            return msg;
+        }
+        if( isExistOpenBracket &&  !isExistEndBracket){
+            msg->info = "missing closing bracket";
+            msg->status = 0;
+            return msg;
+        }
+    }
+
+    cmd->path = strtok(other,"[");
+
+    bool isContainBracket = (strstr( cmd->path,"[" ) != NULL) || (strstr( cmd->path,"]" ) != NULL);
+    if ( isContainBracket ) {
+        msg->info = " names of the elements cannot contain characters \"[\" and \"[\" ";
+        msg->status = 0;
+        return msg;
+    }
+
+    char* value=NULL;
+    if( isExistOpenBracket )
+        value = strtok(NULL, "]");
+
+
+    switch ( cmd->apiAction ) {
+        case COMMAND_CREATE:
+            cmd->apiCreateParams.value = value;
+            break;
+        case COMMAND_UPDATE:
+            if( value == NULL)
+            {
+                msg->info = "value is NULL";
+                msg->status = 0;
+                return msg;
+            } else
+                cmd->apiUpdateParams.value = value;
+            break;
+        case COMMAND_DELETE:
+            if ( isExistOpenBracket )
+                cmd->apiDeleteParams.isDelValue = true;
+            else
+                cmd->apiDeleteParams.isDelValue = false;
+            break;
+        case COMMAND_READ:
+            if( value != NULL)
+            {
+                msg->info = "read command does not use value";
+                msg->status = 0;
+                return msg;
+            }
+            break;
+    }
+
+
+    msg->info = NULL;
+    msg->status = 1;
+    return msg;
+}
+void cmdToXml(struct command cmd,char*  outputXml) {
+    strcat(outputXml, "<сommand>");
+
+    strcat(outputXml, "<action>");
+
+    char nameCommand[2] = {0};
+    snprintf(nameCommand, 2, "%d", cmd.apiAction);
+    strcat(outputXml, nameCommand);
+
+    strcat(outputXml, "</action>");
+
+    strcat(outputXml, "<path>");
+    strcat(outputXml, cmd.path);
+    strcat(outputXml, "</path>");
+
+    switch ( cmd.apiAction) {
+        case COMMAND_CREATE:
+            strcat(outputXml, "<value>");
+            if( cmd.apiCreateParams.value != NULL)
+                strcat(outputXml, cmd.apiCreateParams.value);
+            strcat(outputXml, "</value>");
+            break;
+        case COMMAND_UPDATE:
+            strcat(outputXml, "<value>");
+            if( cmd.apiUpdateParams.value != NULL)
+                strcat(outputXml, cmd.apiUpdateParams.value);
+            strcat(outputXml, "</value>");
+            break;
+        case COMMAND_DELETE:
+            strcat(outputXml, "<isDelValue>");
+            if(cmd.apiDeleteParams.isDelValue)
+                strcat(outputXml, "1");
+            else strcat(outputXml, "0");
+            strcat(outputXml, "</isDelValue>");
+            break;
+        case COMMAND_READ:
+            break;
+    }
+    strcat(outputXml, "</сommand>");
 }
 
 void readCmd(char* inputCmd, size_t size) {

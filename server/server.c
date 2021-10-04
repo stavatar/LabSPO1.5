@@ -12,8 +12,8 @@
 #include "../util.h"
 
 
-struct response* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
-    struct response* response = malloc(sizeof(*response));
+struct message* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
+    struct message* response = malloc(sizeof(*response));
 
     struct node* parentNode = storageFindNode(storage, tokenizedPath, (size_t) pathLen - 1);
 
@@ -44,8 +44,8 @@ struct response* handleRequestCreate(struct storage* storage, char** tokenizedPa
     return response;
 }
 
-struct response* handleRequestRead(struct storage* storage, char** tokenizedPath, size_t pathLen) {
-    struct response* response = malloc(sizeof(*response));
+struct message* handleRequestRead(struct storage* storage, char** tokenizedPath, size_t pathLen) {
+    struct message* response = malloc(sizeof(*response));
     char* messageInfo = malloc(sizeof(char) * MAX_MSG_LENGTH);
     bzero(messageInfo, sizeof(char) * MAX_MSG_LENGTH);
 
@@ -80,8 +80,8 @@ struct response* handleRequestRead(struct storage* storage, char** tokenizedPath
     return response;
 }
 
-struct response* handleRequestUpdate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiUpdateParams* params) {
-    struct response* response = malloc(sizeof(*response));
+struct message* handleRequestUpdate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiUpdateParams* params) {
+    struct message* response = malloc(sizeof(*response));
 
     struct node* node = storageFindNode(storage, tokenizedPath, pathLen);
 
@@ -100,8 +100,8 @@ struct response* handleRequestUpdate(struct storage* storage, char** tokenizedPa
     return response;
 }
 
-struct response* handleRequestDelete(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiDeleteParams* params) {
-    struct response* response = malloc(sizeof(*response));
+struct message* handleRequestDelete(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiDeleteParams* params) {
+    struct message* response = malloc(sizeof(*response));
 
     struct node* parentNode = storageFindNode(storage, tokenizedPath, (size_t) pathLen - 1);
 
@@ -127,8 +127,8 @@ struct response* handleRequestDelete(struct storage* storage, char** tokenizedPa
     return response;
 }
 
-struct response* handleRequest(struct storage* storage, struct command* command) {
-    struct response* response;
+struct message* handleRequest(struct storage* storage, struct command* command) {
+    struct message* response;
 
     char** tokenizedPath = tokenizePath(command->path, ".");
     size_t pathLen = stringArrayLen(tokenizedPath);
@@ -180,7 +180,7 @@ void handleClient(struct storage* storage, int socket) {
         char rootPath[ROOT_NODE_NAME_LEN + 1] = ROOT_NODE_NAME ".";
         struct command* command = xmlToStruct(xmlInput, rootPath);
 
-        struct response* response = handleRequest(storage, command);
+        struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
 
