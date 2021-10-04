@@ -59,8 +59,11 @@ struct message* handleRequestRead(struct storage* storage, char** tokenizedPath,
 
     char** nameArr = storageGetAllChildrenName(storage, node);
 
-    strcat(messageInfo, "Node value: ");
-    strcat(messageInfo, node->value);
+
+    if(node->value != NULL) {
+        strcat(messageInfo, "Node value: ");
+        strcat(messageInfo, node->value);
+    }else strcat(messageInfo, "Node value: null ");
 
     if (nameArr[0] != NULL)  {
         strcat(messageInfo, "\nChild nodes:\n");
@@ -69,7 +72,7 @@ struct message* handleRequestRead(struct storage* storage, char** tokenizedPath,
             strcat(messageInfo, "\n");
         }
     }
-    messageInfo[strlen(messageInfo) - 1] = 0;
+
 
     response->status = 1;
     response->info = messageInfo;

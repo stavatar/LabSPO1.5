@@ -83,6 +83,9 @@ struct storage* storageInitRoot(int fd, struct storage* storage, struct node* ro
 
 // lseek must be called beforehand
 static char* storageReadString(int fd) {
+    uint16_t current_pos = lseek(fd, 0, SEEK_CUR);
+    if(current_pos == 0)
+        return NULL;
     uint16_t length;
 
     read(fd, &length, sizeof(length));
