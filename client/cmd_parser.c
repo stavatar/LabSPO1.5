@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include "cmd_parser.h"
+#include "../command_api.h"
 
 // xml => struct message
 struct message xmlToMsg(const char *text) {
@@ -22,8 +23,7 @@ void toLowerCase(char* str, size_t size) {
 }
 
 // adds parameters into struct command
-struct message* inputToCommand(char* strCmd,struct command* cmd)
-{
+struct message* inputToCommand(char* strCmd,struct command* cmd) {
     struct message* msg = malloc( sizeof(*msg));
 
     char* name = strtok(strCmd," ");

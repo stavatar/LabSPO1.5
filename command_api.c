@@ -77,9 +77,9 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
 
     switch (command->apiAction) {
         case COMMAND_CREATE: {
-            xmlNode* valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
-            if (valuePtr != NULL) {
-                command->apiCreateParams.value = (char*) valuePtr->content;
+            xmlNodePtr valueNodePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0];
+            if (valueNodePtr != NULL) {
+                command->apiCreateParams.value = (char*) valueNodePtr->children->content;
             } else {
                 command->apiCreateParams.value = NULL;
             }
@@ -89,9 +89,9 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
             break;
         }
         case COMMAND_UPDATE: {
-            xmlNode* valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
-            if (valuePtr != NULL) {
-                command->apiUpdateParams.value = (char*) valuePtr->content;
+            xmlNodePtr valueNodePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0];
+            if (valueNodePtr != NULL) {
+                command->apiUpdateParams.value = (char*) valueNodePtr->content;
             } else {
                 command->apiUpdateParams.value = NULL;
             }
@@ -116,6 +116,7 @@ void freeCommand(struct command* command) {
 char* responseToString(struct message* response) {
     char* responseStr = malloc(sizeof(char) * MAX_MSG_LENGTH);
     bzero(responseStr, sizeof(char) * MAX_MSG_LENGTH);
+
     char statusStr[2] = {0};
     strcat(responseStr,"<message>");
     strcat(responseStr,"<status>");
