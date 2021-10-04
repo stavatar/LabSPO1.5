@@ -8,3 +8,4 @@
 #define ROOT_NODE_NAME_LEN (sizeof(ROOT_NODE_NAME))
 
 int stringArrayLen(char** arr);
+void pfree(void* ptr);

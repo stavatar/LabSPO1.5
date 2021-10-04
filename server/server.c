@@ -59,17 +59,19 @@ struct message* handleRequestRead(struct storage* storage, char** tokenizedPath,
 
     char** nameArr = storageGetAllChildrenName(storage, node);
 
-    strcat(messageInfo, "Node value: ");
-    strcat(messageInfo, node->value);
+    strcat(messageInfo, node->name);
+    strcat(messageInfo, " [");
+    if (node->value != NULL) {
+        strcat(messageInfo, node->value);
+    }
+    strcat(messageInfo, "]");
 
     if (nameArr[0] != NULL)  {
-        strcat(messageInfo, "\nChild nodes:\n");
         for (size_t i = 0; nameArr[i] != NULL; i++) {
+            strcat(messageInfo, "\n  - ");
             strcat(messageInfo, nameArr[i]);
-            strcat(messageInfo, "\n");
         }
     }
-    messageInfo[strlen(messageInfo) - 1] = 0;
 
     response->status = 1;
     response->info = messageInfo;
@@ -115,8 +117,13 @@ struct message* handleRequestDelete(struct storage* storage, char** tokenizedPat
 
     if (childrenAddr != 0) {
         storageDeleteNode(storage, parentNode, childrenAddr, params->isDelValue);
-        response->status = 1;
-        response->info = "Node is successfully deleted!";
+        if (params->isDelValue) {
+            response->status = 1;
+            response->info = "Value is successfully deleted!";
+        } else {
+            response->status = 1;
+            response->info = "Node is successfully deleted!";
+        }
     } else {
         response->status = 0;
         response->info = "Node is not found";
@@ -161,7 +168,6 @@ struct message* handleRequest(struct storage* storage, struct command* command) 
 }
 
 void handleClient(struct storage* storage, int socket) {
-    //setvbuf(stdout, NULL, _IOLBF, 0);
     while (1) {
         size_t readc;
         size_t filled = 0;
@@ -174,23 +180,21 @@ void handleClient(struct storage* storage, int socket) {
             if (xmlInput[filled - 1] == '\0')
                 break;
         }
-        //printf("%s\n",xmlInput);
         if (!readc) {
             break;
         }
 
-
-        char rootPath[ROOT_NODE_NAME_LEN + 1] = ROOT_NODE_NAME ".";
+        char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
         struct command* command = xmlToStruct(xmlInput, rootPath);
 
         struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
-        //strcat(response->info,xmlInput);
+
         send(socket, responseStr, strlen(responseStr), MSG_NOSIGNAL);
 
-        free(response);
-        free(responseStr);
+        pfree(response);
+        pfree(responseStr);
     }
     close(socket);
     exit(0);
@@ -261,7 +265,7 @@ int main(int argc, char* argv[]) {
         newSocket = accept(sock, &clientAddr, &clientLen);
     }
     close(sock);
-    free(storage);
+    pfree(storage);
     close(fd);
 
     printf("Bye!\n");

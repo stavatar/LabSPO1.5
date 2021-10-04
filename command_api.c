@@ -24,6 +24,8 @@ char** tokenizePath(const char* originalPath, const char* delim) {
     }
 
     /* Add space for trailing token. */
+    // root.a
+    // root.a.
     count += last_comma < (path + strlen(path) - 1);
 
     /* Add space for terminating null string so caller
@@ -45,15 +47,15 @@ char** tokenizePath(const char* originalPath, const char* delim) {
         *(result + idx) = 0;
     }
 
-    free(path);
+    pfree(path);
     return result;
 }
 
 void freeStringArray(char** path) {
     for (size_t i = 0; *(path + i); i++) {
-        free(*(path + i));
+        pfree(*(path + i));
     }
-    free(path);
+    pfree(path);
 }
 
 // path free !!!
@@ -67,19 +69,25 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
     char* action = (char*) xmlXPathEvalExpression(BAD_CAST "//action", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
     char* inputPath = (char*) xmlXPathEvalExpression(BAD_CAST "//path", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
 
-    // concat ROOT_NODE_NAME with input path
-    size_t pathSize = strlen(rootPath) + strlen(inputPath) + 1;
-    char* path = malloc(sizeof(char) * pathSize);
-    snprintf(path, pathSize, "%s%s", rootPath, inputPath);
+    char* path;
+    if (strcmp(inputPath, "$") == 0) {
+        path = malloc(sizeof(char) * ROOT_NODE_NAME_LEN);
+        snprintf(path, ROOT_NODE_NAME_LEN, "%s", rootPath);
+    } else {
+        // concat ROOT_NODE_NAME with input path 2 = dot + /0
+        size_t pathSize = strlen(rootPath) + strlen(inputPath) + 2;
+        path = malloc(sizeof(char) * pathSize);
+        snprintf(path, pathSize, "%s.%s", rootPath, inputPath);
+    }
 
     command->apiAction = (enum apiAction) strtol(action, NULL, 10);
     command->path = path;
 
     switch (command->apiAction) {
         case COMMAND_CREATE: {
-            xmlNodePtr valueNodePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0];
-            if (valueNodePtr != NULL) {
-                command->apiCreateParams.value = (char*) valueNodePtr->children->content;
+            xmlNodePtr valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
+            if (valuePtr != NULL) {
+                command->apiCreateParams.value = (char*) valuePtr->content;
             } else {
                 command->apiCreateParams.value = NULL;
             }
@@ -89,9 +97,9 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
             break;
         }
         case COMMAND_UPDATE: {
-            xmlNodePtr valueNodePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0];
-            if (valueNodePtr != NULL) {
-                command->apiUpdateParams.value = (char*) valueNodePtr->content;
+            xmlNodePtr valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
+            if (valuePtr != NULL) {
+                command->apiUpdateParams.value = (char*) valuePtr->content;
             } else {
                 command->apiUpdateParams.value = NULL;
             }
@@ -108,8 +116,8 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
 }
 
 void freeCommand(struct command* command) {
-    free(command->path);
-    free(command);
+    pfree(command->path);
+    pfree(command);
 }
 
 // Переделать используя libxml !!!

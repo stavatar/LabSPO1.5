@@ -1,6 +1,5 @@
 #include <ctype.h>
 #include "cmd_parser.h"
-#include "../command_api.h"
 
 // xml => struct message
 struct message xmlToMsg(const char *text) {
@@ -23,17 +22,17 @@ void toLowerCase(char* str, size_t size) {
 }
 
 // adds parameters into struct command
-struct message* inputToCommand(char* strCmd,struct command* cmd) {
+struct message* inputToCommand(char* strCmd, struct command* cmd) {
     struct message* msg = malloc( sizeof(*msg));
 
     char* name = strtok(strCmd," ");
-    if(strcmp(name,"create")==0)
+    if (strcmp(name,"create") == 0)
         cmd->apiAction = COMMAND_CREATE;
-    else  if(strcmp(name,"update")==0)
+    else if (strcmp(name,"update") == 0)
         cmd->apiAction = COMMAND_UPDATE;
-    else  if(strcmp(name,"read")==0)
+    else if (strcmp(name,"read") == 0)
         cmd->apiAction = COMMAND_READ;
-    else  if(strcmp(name,"delete")==0)
+    else if (strcmp(name,"delete") == 0)
         cmd->apiAction = COMMAND_DELETE;
     else {
         msg->info = "wrong name command written";
@@ -42,9 +41,8 @@ struct message* inputToCommand(char* strCmd,struct command* cmd) {
     }
     bool isNameRead = (cmd->apiAction == COMMAND_READ);
 
-
     char* other = strtok(NULL,"\n");
-    bool isExistPath = (other != NULL) && ((( strcspn( other, "[" )) > 0)||(isNameRead));
+    bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
     if ( !isExistPath ) {
         msg->info = "missing path";
         msg->status = 0;
@@ -53,15 +51,15 @@ struct message* inputToCommand(char* strCmd,struct command* cmd) {
 
 
     bool isExistOpenBracket = (strstr( other,"[" ) != NULL);
-    bool isExistEndBracket  = other[strlen(other) - 1] == ']';
+    bool isExistEndBracket = other[strlen(other) - 1] == ']';
 
     if(!isNameRead){
-        if( !isExistOpenBracket &&  isExistEndBracket){
+        if( !isExistOpenBracket && isExistEndBracket){
             msg->info = "missing opening bracket";
             msg->status = 0;
             return msg;
         }
-        if( isExistOpenBracket &&  !isExistEndBracket){
+        if( isExistOpenBracket && !isExistEndBracket){
             msg->info = "missing closing bracket";
             msg->status = 0;
             return msg;
@@ -77,8 +75,8 @@ struct message* inputToCommand(char* strCmd,struct command* cmd) {
         return msg;
     }
 
-    char* value=NULL;
-    if( isExistOpenBracket )
+    char* value = NULL;
+    if ( isExistOpenBracket )
         value = strtok(NULL, "]");
 
 
@@ -87,8 +85,7 @@ struct message* inputToCommand(char* strCmd,struct command* cmd) {
             cmd->apiCreateParams.value = value;
             break;
         case COMMAND_UPDATE:
-            if( value == NULL)
-            {
+            if( value == NULL) {
                 msg->info = "value is NULL";
                 msg->status = 0;
                 return msg;
@@ -102,8 +99,7 @@ struct message* inputToCommand(char* strCmd,struct command* cmd) {
                 cmd->apiDeleteParams.isDelValue = false;
             break;
         case COMMAND_READ:
-            if( value != NULL)
-            {
+            if( value != NULL) {
                 msg->info = "read command does not use value";
                 msg->status = 0;
                 return msg;

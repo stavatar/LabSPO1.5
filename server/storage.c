@@ -1,10 +1,11 @@
-#include "storage.h"
-
 #include <unistd.h>
 #include <stdint.h>
 #include <malloc.h>
 #include <string.h>
 #include <errno.h>
+
+#include "storage.h"
+#include "../util.h"
 
 const uint64_t nullAddr = 0;
 
@@ -83,8 +84,11 @@ struct storage* storageInitRoot(int fd, struct storage* storage, struct node* ro
 
 // lseek must be called beforehand
 static char* storageReadString(int fd) {
-    uint16_t length;
+    uint16_t current_pos = lseek(fd, 0, SEEK_CUR);
+    if (current_pos == 0)
+        return NULL;
 
+    uint16_t length;
     read(fd, &length, sizeof(length));
 
     char* str = malloc(sizeof(int8_t) * (length + 1));
@@ -111,7 +115,7 @@ struct node* storageFindNode(struct storage* storage, char* path[], size_t pathL
         char* nodeName = storageReadString(storage->fd);
 
         if (strcmp(nodeName, path[pathIndex]) != 0) {
-            free(nodeName);
+            pfree(nodeName);
             nodeAddr = nodeNextAddr;
             continue;
         }
@@ -155,7 +159,7 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
         char* nodeName = storageReadString(storage->fd);
 
         if (strcmp(nodeName, childrenName) != 0) {
-            free(nodeName);
+            pfree(nodeName);
             nodeAddr = nodeNextAddr;
             continue;
         }
@@ -165,9 +169,9 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
 }
 
 void storageFreeNode(struct node* node) {
-    free(node->name);
-    free(node->value);
-    free(node);
+    pfree(node->name);
+    pfree(node->value);
+    pfree(node);
 }
 
 char** storageGetAllChildrenName(struct storage* storage, struct node* parentNode) {
@@ -241,11 +245,12 @@ void storageUpdateNode(struct storage* storage, struct node* node, char* newValu
         lseek(storage->fd, (__off_t) oldValueAddr, SEEK_SET);
         read(storage->fd, &oldValueLen, sizeof(oldValueLen));
 
-        uint16_t newValueLen = strlen(newValue);
+        uint16_t newValueLen = (uint16_t) strlen(newValue);
         if (newValueLen <= oldValueLen) {
             lseek(storage->fd, (__off_t) oldValueAddr, SEEK_SET);
             write(storage->fd, &newValueLen, sizeof(newValueLen));
-            write(storage->fd, &newValue, sizeof(char) * newValueLen);
+            lseek(storage->fd, (__off_t) (oldValueAddr + sizeof(newValueLen)), SEEK_SET);
+            write(storage->fd, newValue, sizeof(char) * newValueLen);
             return;
         }
     }
@@ -268,8 +273,11 @@ void storageDeleteNode(struct storage* storage, struct node* parentNode, uint64_
             read(storage->fd, &nextNodeAddr, sizeof(nextNodeAddr));
         }
         if (currentNodeAddr == 0) {
+            lseek(storage->fd, (__off_t) (childrenAddr + (sizeof(uint64_t) * NEXT_OFFSET)), SEEK_SET);
+            read(storage->fd, &nextNodeAddr, sizeof(nextNodeAddr));
+
             lseek(storage->fd, (__off_t) (parentNode->addr + sizeof(uint64_t) * CHILD_OFFSET), SEEK_SET);
-            write(storage->fd, &nullAddr, sizeof(nullAddr));
+            write(storage->fd, &nextNodeAddr, sizeof(nextNodeAddr));
         }
         else {
             lseek(storage->fd, (__off_t) (currentNodeAddr + sizeof(uint64_t) * NEXT_OFFSET), SEEK_SET);

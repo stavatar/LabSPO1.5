@@ -18,11 +18,10 @@ void sendQuery(int sock, int pid) {
         if (strcmp(inputCmd,"\n") == 0)
             continue;
 
-
         struct message* msg = inputToCommand(inputCmd,&cmd);
         if(msg->status == 0) {
             printf("Syntax error : %s \n ",msg->info);
-            free(msg);
+            pfree(msg);
             continue;
         }
         cmdToXml(cmd,outputXml);
@@ -34,7 +33,7 @@ void sendQuery(int sock, int pid) {
     }
 
 
-    free(outputXml);
+    pfree(outputXml);
 	kill(pid, SIGKILL);
 	printf("Disconnected\n");
 }

@@ -1,4 +1,6 @@
 
+#include <malloc.h>
+
 // takes array of strings, last element of which is NULL
 int stringArrayLen(char** arr) {
     int i = 0;
@@ -6,4 +8,10 @@ int stringArrayLen(char** arr) {
         i += 1;
     }
     return i;
+}
+
+void pfree(void* ptr) {
+    if (ptr) {
+        free(ptr);
+    }
 }
