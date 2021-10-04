@@ -20,7 +20,7 @@ void sendQuery(int sock, int pid) {
 
         struct message* msg = inputToCommand(inputCmd,&cmd);
         if(msg->status == 0) {
-            printf("Syntax error : %s \n ",msg->info);
+            printf("Syntax error : %s \n\n",msg->info);
             pfree(msg);
             continue;
         }

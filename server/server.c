@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 #include "storage.h"
 #include "../command_api.h"
@@ -187,6 +188,36 @@ void handleClient(struct storage* storage, int socket) {
         char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
         struct command* command = xmlToStruct(xmlInput, rootPath);
 
+        printf("The command received ");
+        switch (command->apiAction) {
+            case COMMAND_CREATE:
+                printf("[create %s", command->path);
+                if (command->apiCreateParams.value != NULL) {
+                    printf(" %s", command->apiCreateParams.value);
+                }
+                printf("]\n");
+                break;
+            case COMMAND_READ:
+                printf("[read %s]\n", command->path);
+                break;
+            case COMMAND_UPDATE:
+                printf("[update %s", command->path);
+                if (command->apiUpdateParams.value != NULL) {
+                    printf(" %s", command->apiUpdateParams.value);
+                }
+                printf("]\n");
+                break;
+            case COMMAND_DELETE:
+                printf("[delete %s, target: ", command->path);
+                if (command->apiDeleteParams.isDelValue) {
+                    printf("value");
+                } else {
+                    printf("node");
+                }
+                printf("]\n");
+                break;
+        }
+
         struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
@@ -204,6 +235,8 @@ int main(int argc, char* argv[]) {
     if (argc < 3) {
         printError("Invalid arguments: server [file] [port]\n")
     }
+
+    setbuf(stdout, NULL);
 
     int fd = open(argv[1], O_RDWR);
     struct storage *storage;
@@ -248,6 +281,7 @@ int main(int argc, char* argv[]) {
     if (listen(sock, 1) == -1)
         printError("listen")
 
+    char ipStr[INET_ADDRSTRLEN];
     struct sockaddr clientAddr;
     socklen_t clientLen = sizeof(clientAddr);
     int newSocket, pid;
@@ -256,10 +290,15 @@ int main(int argc, char* argv[]) {
     while (newSocket) {
         pid = fork();
         if (!pid) {
-            if (newSocket < 0) { printError("Error connection") }
-            if (dup2(newSocket, STDOUT_FILENO) == -1) { printError("dup2") }
-            if (dup2(newSocket, STDERR_FILENO) == -1) { printError("dup2") }
+            struct sockaddr_in* pV4Addr = (struct sockaddr_in*) &clientAddr;
+            struct in_addr ipAddr = pV4Addr->sin_addr;
+            inet_ntop( AF_INET, &ipAddr, ipStr, INET_ADDRSTRLEN );
 
+            if (newSocket < 0) { printError("Error connection") }
+//            if (dup2(newSocket, STDOUT_FILENO) == -1) { printError("dup2") }
+//            if (dup2(newSocket, STDERR_FILENO) == -1) { printError("dup2") }
+
+            printf("Client %s connected\n", ipStr);
             handleClient(storage, newSocket);
         }
         newSocket = accept(sock, &clientAddr, &clientLen);
