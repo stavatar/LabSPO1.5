@@ -115,7 +115,7 @@ void freeCommand(struct command* command) {
 // Переделать используя libxml !!!
 char* responseToString(struct message* response) {
     char* responseStr = malloc(sizeof(char) * MAX_MSG_LENGTH);
-
+    bzero(responseStr, sizeof(char) * MAX_MSG_LENGTH);
     char statusStr[2] = {0};
     strcat(responseStr,"<message>");
     strcat(responseStr,"<status>");

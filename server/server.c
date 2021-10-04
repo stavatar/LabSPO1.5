@@ -161,6 +161,7 @@ struct message* handleRequest(struct storage* storage, struct command* command) 
 }
 
 void handleClient(struct storage* storage, int socket) {
+    //setvbuf(stdout, NULL, _IOLBF, 0);
     while (1) {
         size_t readc;
         size_t filled = 0;
@@ -173,9 +174,11 @@ void handleClient(struct storage* storage, int socket) {
             if (xmlInput[filled - 1] == '\0')
                 break;
         }
+        //printf("%s\n",xmlInput);
         if (!readc) {
             break;
         }
+
 
         char rootPath[ROOT_NODE_NAME_LEN + 1] = ROOT_NODE_NAME ".";
         struct command* command = xmlToStruct(xmlInput, rootPath);
@@ -183,8 +186,8 @@ void handleClient(struct storage* storage, int socket) {
         struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
-
-        send(socket, response, strlen(responseStr), MSG_NOSIGNAL);
+        //strcat(response->info,xmlInput);
+        send(socket, responseStr, strlen(responseStr), MSG_NOSIGNAL);
 
         free(response);
         free(responseStr);
