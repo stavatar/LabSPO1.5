@@ -49,7 +49,7 @@ char** tokenizePath(const char* originalPath, const char* delim) {
     return result;
 }
 
-void freeTokenizedPath(char** path) {
+void freeStringArray(char** path) {
     for (size_t i = 0; *(path + i); i++) {
         free(*(path + i));
     }

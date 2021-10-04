@@ -78,7 +78,7 @@ struct response {
 };
 
 char** tokenizePath(const char* originalPath, const char* delim);
-void freeTokenizedPath(char** path);
+void freeStringArray(char** path);
 
 struct command* xmlToStruct(char* xml, char* rootPath);
 void freeCommand(struct command* command);

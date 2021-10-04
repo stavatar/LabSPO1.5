@@ -19,38 +19,65 @@ struct response* handleRequestCreate(struct storage* storage, char** tokenizedPa
 
     if (parentNode == NULL) {
         response->status = 0;
-        response->info = "Target node is not found";
-    } else {
-        uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
+        response->info = "Node is not found";
+        return response;
+    }
 
-        if (childrenAddr == 0) {
-            struct node newNode = {
+    uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
+
+    if (childrenAddr == 0) {
+        struct node newNode = {
                 .name = tokenizedPath[pathLen - 1],
                 .next = 0,
                 .child = 0,
                 .value = params->value
-            };
-            storageCreateNode(storage, parentNode, &newNode);
-            response->status = 1;
-            response->info = "Node is successfully created!";
-        } else {
-            response->status = 0;
-            response->info = "Node already exists";
-        }
+        };
+        storageCreateNode(storage, parentNode, &newNode);
+        response->status = 1;
+        response->info = "Node is successfully created!";
+    } else {
+        response->status = 0;
+        response->info = "Node already exists";
     }
-
     storageFreeNode(parentNode);
+
     return response;
 }
 
 struct response* handleRequestRead(struct storage* storage, char** tokenizedPath, size_t pathLen) {
     struct response* response = malloc(sizeof(*response));
+    char* messageInfo = malloc(sizeof(char) * MAX_MSG_LENGTH);
+    bzero(messageInfo, sizeof(char) * MAX_MSG_LENGTH);
 
     struct node* node = storageFindNode(storage, tokenizedPath, pathLen);
 
-//    storageReadNode(storage, node);
+    if (node == NULL) {
+        response->status = 0;
+        response->info = "Node is not found";
+        return response;
+    }
 
+    char** nameArr = storageGetAllChildrenName(storage, node);
+
+    strcat(messageInfo, "Node value: ");
+    strcat(messageInfo, node->value);
+
+    if (nameArr[0] != NULL)  {
+        strcat(messageInfo, "\nChild nodes:\n");
+        for (size_t i = 0; nameArr[i] != NULL; i++) {
+            strcat(messageInfo, nameArr[i]);
+            strcat(messageInfo, "\n");
+        }
+    }
+    messageInfo[strlen(messageInfo) - 1] = 0;
+
+    response->status = 1;
+    response->info = messageInfo;
+
+    freeStringArray(nameArr);
     storageFreeNode(node);
+
+    return response;
 }
 
 struct response* handleRequestUpdate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiUpdateParams* params) {
@@ -58,9 +85,19 @@ struct response* handleRequestUpdate(struct storage* storage, char** tokenizedPa
 
     struct node* node = storageFindNode(storage, tokenizedPath, pathLen);
 
-//    storageUpdateNode(storage, node, &params);
+    if (node == NULL) {
+        response->status = 0;
+        response->info = "Node is not found";
+        return response;
+    }
+
+    storageUpdateNode(storage, node, params->value);
+    response->status = 1;
+    response->info = "The value is successfully updated";
 
     storageFreeNode(node);
+
+    return response;
 }
 
 struct response* handleRequestDelete(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiDeleteParams* params) {
@@ -71,21 +108,22 @@ struct response* handleRequestDelete(struct storage* storage, char** tokenizedPa
     if (parentNode == NULL) {
         response->status = 0;
         response->info = "Target node is not found";
+        return response;
+    }
+
+    uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
+
+    if (childrenAddr != 0) {
+        storageDeleteNode(storage, parentNode, childrenAddr, params->isDelValue);
+        response->status = 1;
+        response->info = "Node is successfully deleted!";
     } else {
-        uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
-
-        if (childrenAddr != 0) {
-
-            storageDeleteNode(storage, parentNode, childrenAddr, params->isDelValue);
-            response->status = 1;
-            response->info = "Node is successfully deleted!";
-        } else {
-            response->status = 0;
-            response->info = "Node is not found";
-        }
+        response->status = 0;
+        response->info = "Node is not found";
     }
 
     storageFreeNode(parentNode);
+
     return response;
 }
 
@@ -116,7 +154,7 @@ struct response* handleRequest(struct storage* storage, struct command* command)
             break;
         }
     }
-    freeTokenizedPath(tokenizedPath);
+    freeStringArray(tokenizedPath);
     freeCommand(command);
 
     return response;
@@ -170,8 +208,10 @@ int main(int argc, char* argv[]) {
 
     if (fd < 0 && errno == ENOENT) {
         fd = open(argv[1], O_CREAT | O_RDWR, 0644);
+
+        struct node rootNode = {.name = "root", .next = 0, .child = 0, .value = NULL};
         storage = storageInit(fd);
-        storage = storageInitRoot(fd, storage);
+        storage = storageInitRoot(fd, storage, &rootNode);
     } else {
         storage = storageOpen(fd);
     }

@@ -40,7 +40,7 @@ struct node {
 
 struct storage* storageInit(int fd);
 struct storage* storageOpen(int fd);
-struct storage* storageInitRoot(int fd, struct storage*);
+struct storage* storageInitRoot(int fd, struct storage* storage, struct node* rootNode);
 
 struct node* storageFindNode(struct storage* storage, char* path[], size_t pathLen);
 uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, char* childrenName);
@@ -48,4 +48,7 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
 void storageFreeNode(struct node* node);
 
 void storageCreateNode(struct storage* storage, struct node* parentNode, struct node* newNode);
-void storageDeleteNode(struct storage *pStorage, struct node *pNode, uint64_t addr, bool isDelValue);
+void storageUpdateNode(struct storage* storage, struct node* node, char* newValue);
+void storageDeleteNode(struct storage* storage, struct node* node, uint64_t childrenAddr, bool isDelValue);
+
+char** storageGetAllChildrenName(struct storage* storage, struct node* parentNode);
