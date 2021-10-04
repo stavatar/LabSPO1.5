@@ -56,40 +56,60 @@ void freeTokenizedPath(char** path) {
     free(path);
 }
 
-struct command* xmlToStruct(char* xml) {
+// path free !!!
+// path is initialized by (ROOT_NODE_NAME ".")
+struct command* xmlToStruct(char* xml, char* rootPath) {
     struct command* command = malloc(sizeof(*command));
 
     xmlDocPtr docPtr = xmlRecoverDoc((xmlChar*) xml);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
 
     char* action = (char*) xmlXPathEvalExpression(BAD_CAST "//action", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
-    char* path = (char*) xmlXPathEvalExpression(BAD_CAST "//path", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
+    char* inputPath = (char*) xmlXPathEvalExpression(BAD_CAST "//path", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
+
+    // concat ROOT_NODE_NAME with input path
+    size_t pathSize = strlen(rootPath) + strlen(inputPath) + 1;
+    char* path = malloc(sizeof(char) * pathSize);
+    snprintf(path, pathSize, "%s%s", rootPath, inputPath);
 
     command->apiAction = (enum apiAction) strtol(action, NULL, 10);
     command->path = path;
 
     switch (command->apiAction) {
         case COMMAND_CREATE: {
-            char* value = (char*) xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
-            command->apiCreateParams.value = value;
+            xmlNode* valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
+            if (valuePtr != NULL) {
+                command->apiCreateParams.value = (char*) valuePtr->content;
+            } else {
+                command->apiCreateParams.value = NULL;
+            }
             break;
         }
         case COMMAND_READ: {
             break;
         }
         case COMMAND_UPDATE: {
-            char* value = (char*) xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
-            command->apiUpdateParams.value = value;
+            xmlNode* valuePtr = xmlXPathEvalExpression(BAD_CAST "//value", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
+            if (valuePtr != NULL) {
+                command->apiUpdateParams.value = (char*) valuePtr->content;
+            } else {
+                command->apiUpdateParams.value = NULL;
+            }
             break;
         }
         case COMMAND_DELETE: {
-            char* isDelValue = (char*) xmlXPathEvalExpression(BAD_CAST "//isDelValue", xpathCtxPtr)->nodesetval->nodeTab[0]->children->content;
-            command->apiDeleteParams.isDelValue = (bool) strtol(isDelValue, NULL, 0);
+            xmlNode* isDelValuePtr = xmlXPathEvalExpression(BAD_CAST "//isDelValue", xpathCtxPtr)->nodesetval->nodeTab[0]->children;
+            command->apiDeleteParams.isDelValue = (bool) strtol((char*) isDelValuePtr->content, NULL, 0);
             break;
         }
     }
 
     return command;
+}
+
+void freeCommand(struct command* command) {
+    free(command->path);
+    free(command);
 }
 
 // Переделать используя libxml !!!

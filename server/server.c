@@ -12,54 +12,116 @@
 #include "../util.h"
 
 
-struct response* handleRequestCreate(struct storage* storage, struct node* node, struct apiCreateParams createParams) {
+struct response* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
+    struct response* response = malloc(sizeof(*response));
 
-}
+    struct node* parentNode = storageFindNode(storage, tokenizedPath, (size_t) pathLen - 1);
 
-struct response* handleRequestRead(struct storage* storage, struct node* node) {
+    if (parentNode == NULL) {
+        response->status = 0;
+        response->info = "Target node is not found";
+    } else {
+        uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
 
-}
-
-struct response* handleRequestUpdate(struct storage* storage, struct node* node, struct apiUpdateParams updateParams) {
-
-}
-
-struct response* handleRequestDelete(struct storage* storage, struct node* node, struct apiDeleteParams deleteParams) {
-
-}
-
-// главная функция, которая обрабатывает запрос
-struct response* handleRequest(struct command* command, struct storage* storage) {
-    struct response* response;
-
-    char** tokenizedPath = tokenizePath(command->path, ".");
-    int pathLen = stringArrayLen(tokenizedPath);
-
-    struct node* node = storageFindNode(storage, tokenizedPath, (size_t) pathLen);
-
-    switch (command->apiAction) {
-        case COMMAND_CREATE: {
-            response = handleRequestCreate(storage, node, command->apiCreateParams);
-        }
-        case COMMAND_READ: {
-            response = handleRequestRead(storage, node);
-        }
-        case COMMAND_UPDATE: {
-            response = handleRequestUpdate(storage, node, command->apiUpdateParams);
-        }
-        case COMMAND_DELETE: {
-            response = handleRequestDelete(storage, node, command->apiDeleteParams);
+        if (childrenAddr == 0) {
+            struct node newNode = {
+                .name = tokenizedPath[pathLen - 1],
+                .next = 0,
+                .child = 0,
+                .value = params->value
+            };
+            storageCreateNode(storage, parentNode, &newNode);
+            response->status = 1;
+            response->info = "Node is successfully created!";
+        } else {
+            response->status = 0;
+            response->info = "Node already exists";
         }
     }
 
-    freeTokenizedPath(tokenizedPath);
+    storageFreeNode(parentNode);
+    return response;
+}
+
+struct response* handleRequestRead(struct storage* storage, char** tokenizedPath, size_t pathLen) {
+    struct response* response = malloc(sizeof(*response));
+
+    struct node* node = storageFindNode(storage, tokenizedPath, pathLen);
+
+//    storageReadNode(storage, node);
+
     storageFreeNode(node);
-    free(command);
+}
+
+struct response* handleRequestUpdate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiUpdateParams* params) {
+    struct response* response = malloc(sizeof(*response));
+
+    struct node* node = storageFindNode(storage, tokenizedPath, pathLen);
+
+//    storageUpdateNode(storage, node, &params);
+
+    storageFreeNode(node);
+}
+
+struct response* handleRequestDelete(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiDeleteParams* params) {
+    struct response* response = malloc(sizeof(*response));
+
+    struct node* parentNode = storageFindNode(storage, tokenizedPath, (size_t) pathLen - 1);
+
+    if (parentNode == NULL) {
+        response->status = 0;
+        response->info = "Target node is not found";
+    } else {
+        uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
+
+        if (childrenAddr != 0) {
+
+            storageDeleteNode(storage, parentNode, childrenAddr, params->isDelValue);
+            response->status = 1;
+            response->info = "Node is successfully deleted!";
+        } else {
+            response->status = 0;
+            response->info = "Node is not found";
+        }
+    }
+
+    storageFreeNode(parentNode);
+    return response;
+}
+
+struct response* handleRequest(struct storage* storage, struct command* command) {
+    struct response* response;
+
+    char** tokenizedPath = tokenizePath(command->path, ".");
+    size_t pathLen = stringArrayLen(tokenizedPath);
+
+    // create a.b
+    // ["root", "a", "b", NULL]
+
+    switch (command->apiAction) {
+        case COMMAND_CREATE: {
+            response = handleRequestCreate(storage, tokenizedPath, pathLen, &command->apiCreateParams);
+            break;
+        }
+        case COMMAND_READ: {
+            response = handleRequestRead(storage, tokenizedPath, pathLen);
+            break;
+        }
+        case COMMAND_UPDATE: {
+            response = handleRequestUpdate(storage, tokenizedPath, pathLen, &command->apiUpdateParams);
+            break;
+        }
+        case COMMAND_DELETE: {
+            response = handleRequestDelete(storage, tokenizedPath, pathLen, &command->apiDeleteParams);
+            break;
+        }
+    }
+    freeTokenizedPath(tokenizedPath);
+    freeCommand(command);
 
     return response;
 }
 
-// главная функция, которая обрабатывает запросы одного клиента
 void handleClient(struct storage* storage, int socket) {
     while (1) {
         size_t readc;
@@ -77,14 +139,16 @@ void handleClient(struct storage* storage, int socket) {
             break;
         }
 
-        struct command* command = xmlToStruct(xmlInput);
+        char rootPath[ROOT_NODE_NAME_LEN + 1] = ROOT_NODE_NAME ".";
+        struct command* command = xmlToStruct(xmlInput, rootPath);
 
-        struct response* response = handleRequest(command, storage);
+        struct response* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
 
         send(socket, response, strlen(responseStr), MSG_NOSIGNAL);
 
+        free(response);
         free(responseStr);
     }
     close(socket);
