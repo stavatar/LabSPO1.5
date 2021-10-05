@@ -83,4 +83,6 @@ void freeStringArray(char** path);
 struct command* xmlToStruct(char* xml, char* rootPath);
 void freeCommand(struct command* command);
 
+struct message* inputToCommand(char* strCmd,struct command* cmd);
+
 char* responseToString(struct message* response);

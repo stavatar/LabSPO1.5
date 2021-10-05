@@ -15,105 +15,8 @@ struct message xmlToMsg(const char *text) {
     return (struct message) {.status = status, .info = info};
 }
 
-void toLowerCase(char* str, size_t size) {
-    for (size_t i = 0; i < size; i++) {
-        str[i] = (char) tolower(str[i]);
-    }
-}
-
-// adds parameters into struct command
-struct message* inputToCommand(char* strCmd, struct command* cmd) {
-    struct message* msg = malloc( sizeof(*msg));
-
-    char* name = strtok(strCmd," ");
-    if (strcmp(name,"create") == 0)
-        cmd->apiAction = COMMAND_CREATE;
-    else if (strcmp(name,"update") == 0)
-        cmd->apiAction = COMMAND_UPDATE;
-    else if (strcmp(name,"read") == 0)
-        cmd->apiAction = COMMAND_READ;
-    else if (strcmp(name,"delete") == 0)
-        cmd->apiAction = COMMAND_DELETE;
-    else {
-        msg->info = "wrong name command written";
-        msg->status = 0;
-        return msg;
-    }
-    bool isNameRead = (cmd->apiAction == COMMAND_READ);
-
-    char* other = strtok(NULL,"\n");
-    bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
-    if ( !isExistPath ) {
-        msg->info = "missing path";
-        msg->status = 0;
-        return msg;
-    }
-
-
-    bool isExistOpenBracket = (strstr( other,"[" ) != NULL);
-    bool isExistEndBracket = other[strlen(other) - 1] == ']';
-
-    if(!isNameRead){
-        if( !isExistOpenBracket && isExistEndBracket){
-            msg->info = "missing opening bracket";
-            msg->status = 0;
-            return msg;
-        }
-        if( isExistOpenBracket && !isExistEndBracket){
-            msg->info = "missing closing bracket";
-            msg->status = 0;
-            return msg;
-        }
-    }
-
-    cmd->path = strtok(other,"[");
-
-    bool isContainBracket = (strstr( cmd->path,"[" ) != NULL) || (strstr( cmd->path,"]" ) != NULL);
-    if ( isContainBracket ) {
-        msg->info = " names of the elements cannot contain characters \"[\" and \"[\" ";
-        msg->status = 0;
-        return msg;
-    }
-
-    char* value = NULL;
-    if ( isExistOpenBracket )
-        value = strtok(NULL, "]");
-
-
-    switch ( cmd->apiAction ) {
-        case COMMAND_CREATE:
-            cmd->apiCreateParams.value = value;
-            break;
-        case COMMAND_UPDATE:
-            if( value == NULL) {
-                msg->info = "value is NULL";
-                msg->status = 0;
-                return msg;
-            } else
-                cmd->apiUpdateParams.value = value;
-            break;
-        case COMMAND_DELETE:
-            if ( isExistOpenBracket )
-                cmd->apiDeleteParams.isDelValue = true;
-            else
-                cmd->apiDeleteParams.isDelValue = false;
-            break;
-        case COMMAND_READ:
-            if( value != NULL) {
-                msg->info = "read command does not use value";
-                msg->status = 0;
-                return msg;
-            }
-            break;
-    }
-
-
-    msg->info = NULL;
-    msg->status = 1;
-    return msg;
-}
-void cmdToXml(struct command cmd,char*  outputXml) {
-    strcat(outputXml, "<сommand>");
+void cmdToXml(struct command cmd, char* outputXml) {
+    strcat(outputXml, "<command>");
 
     strcat(outputXml, "<action>");
 
@@ -150,7 +53,7 @@ void cmdToXml(struct command cmd,char*  outputXml) {
         case COMMAND_READ:
             break;
     }
-    strcat(outputXml, "</сommand>");
+    strcat(outputXml, "</command>");
 }
 
 void readCmd(char* inputCmd, size_t size) {

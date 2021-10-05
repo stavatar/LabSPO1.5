@@ -51,11 +51,11 @@ char** tokenizePath(const char* originalPath, const char* delim) {
     return result;
 }
 
-void freeStringArray(char** path) {
-    for (size_t i = 0; *(path + i); i++) {
-        pfree(*(path + i));
+void freeStringArray(char** array) {
+    for (size_t i = 0; *(array + i); i++) {
+        pfree(*(array + i));
     }
-    pfree(path);
+    pfree(array);
 }
 
 // path free !!!
@@ -118,6 +118,106 @@ struct command* xmlToStruct(char* xml, char* rootPath) {
 void freeCommand(struct command* command) {
     pfree(command->path);
     pfree(command);
+}
+
+struct message* inputToCommand(char* originalStrCmd, struct command* cmd) {
+    struct message* msg = malloc(sizeof(*msg));
+
+    char* strCmd = strdup(originalStrCmd);
+
+    char* name = strtok(strCmd," ");
+    toLowerCase(name, strlen(name));
+
+    if (strcmp(name,"create") == 0)
+        cmd->apiAction = COMMAND_CREATE;
+    else if (strcmp(name,"update") == 0)
+        cmd->apiAction = COMMAND_UPDATE;
+    else if (strcmp(name,"read") == 0)
+        cmd->apiAction = COMMAND_READ;
+    else if (strcmp(name,"delete") == 0)
+        cmd->apiAction = COMMAND_DELETE;
+    else {
+        msg->info = "wrong name command written";
+        msg->status = 0;
+        return msg;
+    }
+    bool isNameRead = (cmd->apiAction == COMMAND_READ);
+
+    char* other = strtok(NULL,"\r\n");
+    bool isUseReservedSym = (strstr( other,"$" ) != NULL)&& (cmd->apiAction != COMMAND_READ);
+    if (isUseReservedSym) {
+        msg->info = "cannot use $ in commands CREATE, UPDATE and DELETE";
+        msg->status = 0;
+        return msg;
+    }
+
+    bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
+    if ( !isExistPath ) {
+        msg->info = "missing path";
+        msg->status = 0;
+        return msg;
+    }
+
+    bool isExistOpenBracket = (strstr( other,"[" ) != NULL);
+    bool isExistEndBracket = other[strlen(other) - 1] == ']';
+
+    if (!isNameRead){
+        if ( !isExistOpenBracket && isExistEndBracket){
+            msg->info = "Missing opening bracket";
+            msg->status = 0;
+            return msg;
+        }
+        if ( isExistOpenBracket && !isExistEndBracket){
+            msg->info = "Missing closing bracket";
+            msg->status = 0;
+            return msg;
+        }
+    }
+
+    cmd->path = strtok(other,"[");
+
+    bool isContainBracket = (strstr( cmd->path,"[" ) != NULL) || (strstr( cmd->path,"]" ) != NULL);
+    if ( isContainBracket ) {
+        msg->info = "Element name could not contain characters \"[\" and \"[\"";
+        msg->status = 0;
+        return msg;
+    }
+
+    char* value = NULL;
+    if ( isExistOpenBracket )
+        value = strtok(NULL, "]");
+
+
+    switch ( cmd->apiAction ) {
+        case COMMAND_CREATE:
+            cmd->apiCreateParams.value = value;
+            break;
+        case COMMAND_UPDATE:
+            if( value == NULL) {
+                msg->info = "value is NULL";
+                msg->status = 0;
+                return msg;
+            } else
+                cmd->apiUpdateParams.value = value;
+            break;
+        case COMMAND_DELETE:
+            if ( isExistOpenBracket )
+                cmd->apiDeleteParams.isDelValue = true;
+            else
+                cmd->apiDeleteParams.isDelValue = false;
+            break;
+        case COMMAND_READ:
+            if( value != NULL) {
+                msg->info = "read command does not use value";
+                msg->status = 0;
+                return msg;
+            }
+            break;
+    }
+
+    msg->info = NULL;
+    msg->status = 1;
+    return msg;
 }
 
 // Переделать используя libxml !!!

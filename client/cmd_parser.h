@@ -8,8 +8,8 @@
 #include "../util.h"
 #include "../mt.h"
 #include "../command_api.h"
+
 void readCmd(char* inputCmd, size_t size);
-struct message* inputToCommand(char* strCmd,struct command* cmd);
 void cmdToXml(struct command cmd,char*  outputXml);
 struct message xmlToMsg(const char *text);
 

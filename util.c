@@ -1,5 +1,5 @@
-
 #include <malloc.h>
+#include <ctype.h>
 
 // takes array of strings, last element of which is NULL
 int stringArrayLen(char** arr) {
@@ -13,5 +13,11 @@ int stringArrayLen(char** arr) {
 void pfree(void* ptr) {
     if (ptr) {
         free(ptr);
+    }
+}
+
+void toLowerCase(char* str, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        str[i] = (char) tolower(str[i]);
     }
 }

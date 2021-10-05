@@ -12,6 +12,38 @@
 #include "../command_api.h"
 #include "../util.h"
 
+void printLogMessage(struct command* command) {
+    printf("The command received \"");
+    switch (command->apiAction) {
+        case COMMAND_CREATE:
+            printf("create %s", command->path);
+            if (command->apiCreateParams.value != NULL) {
+                printf(" %s", command->apiCreateParams.value);
+            }
+            printf("\"\n");
+            break;
+        case COMMAND_READ:
+            printf("read %s", command->path);
+            printf("\"\n");
+            break;
+        case COMMAND_UPDATE:
+            printf("update %s", command->path);
+            if (command->apiUpdateParams.value != NULL) {
+                printf(" %s", command->apiUpdateParams.value);
+            }
+            printf("\"\n");
+            break;
+        case COMMAND_DELETE:
+            printf("delete %s, target: ", command->path);
+            if (command->apiDeleteParams.isDelValue) {
+                printf("value");
+            } else {
+                printf("node");
+            }
+            printf("\"\n");
+            break;
+    }
+}
 
 struct message* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
     struct message* response = malloc(sizeof(*response));
@@ -138,11 +170,14 @@ struct message* handleRequestDelete(struct storage* storage, char** tokenizedPat
 struct message* handleRequest(struct storage* storage, struct command* command) {
     struct message* response;
 
+    printLogMessage(command);
+
     char** tokenizedPath = tokenizePath(command->path, ".");
     size_t pathLen = stringArrayLen(tokenizedPath);
 
     // create a.b
     // ["root", "a", "b", NULL]
+    // pathLen = 3
 
     switch (command->apiAction) {
         case COMMAND_CREATE: {
@@ -163,7 +198,8 @@ struct message* handleRequest(struct storage* storage, struct command* command) 
         }
     }
     freeStringArray(tokenizedPath);
-    freeCommand(command);
+//    freeCommand(command);
+//    pfree(command);
 
     return response;
 }
@@ -188,42 +224,14 @@ void handleClient(struct storage* storage, int socket) {
         char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
         struct command* command = xmlToStruct(xmlInput, rootPath);
 
-        printf("The command received ");
-        switch (command->apiAction) {
-            case COMMAND_CREATE:
-                printf("[create %s", command->path);
-                if (command->apiCreateParams.value != NULL) {
-                    printf(" %s", command->apiCreateParams.value);
-                }
-                printf("]\n");
-                break;
-            case COMMAND_READ:
-                printf("[read %s]\n", command->path);
-                break;
-            case COMMAND_UPDATE:
-                printf("[update %s", command->path);
-                if (command->apiUpdateParams.value != NULL) {
-                    printf(" %s", command->apiUpdateParams.value);
-                }
-                printf("]\n");
-                break;
-            case COMMAND_DELETE:
-                printf("[delete %s, target: ", command->path);
-                if (command->apiDeleteParams.isDelValue) {
-                    printf("value");
-                } else {
-                    printf("node");
-                }
-                printf("]\n");
-                break;
-        }
-
         struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
-
         send(socket, responseStr, strlen(responseStr), MSG_NOSIGNAL);
 
+        printf("Response: %s\n", responseStr);
+
+        freeCommand(command);
         pfree(response);
         pfree(responseStr);
     }
@@ -233,33 +241,74 @@ void handleClient(struct storage* storage, int socket) {
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        printError("Invalid arguments: server [file] [port]\n")
+        printError("Invalid arguments: server [PORT] [STORAGE_FILE] [COMMANDS_FILE]\n")
     }
 
     setbuf(stdout, NULL);
 
-    int fd = open(argv[1], O_RDWR);
+    int outputFD = open(argv[2], O_RDWR);
     struct storage *storage;
 
-    if (fd < 0 && errno != ENOENT) {
+    if (outputFD < 0 && errno != ENOENT) {
         perror("Error while opening the file");
         return errno;
     }
 
-    if (fd < 0 && errno == ENOENT) {
-        fd = open(argv[1], O_CREAT | O_RDWR, 0644);
+    if (outputFD < 0 && errno == ENOENT) {
+        outputFD = open(argv[2], O_CREAT | O_RDWR, 0644);
 
-        struct node rootNode = {.name = "root", .next = 0, .child = 0, .value = NULL};
-        storage = storageInit(fd);
-        storage = storageInitRoot(fd, storage, &rootNode);
+        struct node rootNode = {.name = ROOT_NODE_NAME, .next = 0, .child = 0, .value = NULL};
+        storage = storageInit(outputFD);
+        storage = storageInitRoot(outputFD, storage, &rootNode);
     } else {
-        storage = storageOpen(fd);
+        storage = storageOpen(outputFD);
     }
+
+
+    FILE* commandsFD = NULL;
+    if (argc == 4) {
+        commandsFD = fopen(argv[3], "r");
+
+        if (commandsFD == NULL) {
+            printf("Error: could not open the commands file");
+            return 1;
+        }
+    }
+
+    if (commandsFD != NULL) {
+        char* inputCmd = malloc(sizeof(char) * REG_BUFFER_SIZE);
+        struct command* command = malloc(sizeof(*command));
+
+        char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
+        while (fgets(inputCmd, REG_BUFFER_SIZE, commandsFD)) {
+            inputToCommand(inputCmd, command);
+
+            size_t pathSize = strlen(rootPath) + strlen(command->path) + 2;
+            char* path = malloc(sizeof(char) * pathSize);
+            snprintf(path, pathSize, "%s.%s", rootPath, command->path);
+            command->path = path;
+
+            struct message* response = handleRequest(storage, command);
+
+            printf("[code: %d] %s\n", response->status, response->info);
+
+//            sleep(1);
+            free(response);
+        }
+
+        freeCommand(command);
+        free(inputCmd);
+
+        printf("The work is done. Goodbye!\n");
+        exit(0);
+    }
+
+
 
     int sock, port;
     int optval = 1;
 
-    port = (int) strtol(argv[2], NULL, 10);
+    port = (int) strtol(argv[1], NULL, 10);
     if (port == 0) {
         perror("Enter the correct port");
         return errno;
@@ -276,10 +325,14 @@ int main(int argc, char* argv[]) {
     name.sin_addr.s_addr = INADDR_ANY;
     name.sin_port = htons(port);
 
-    if (bind(sock, (void *) &name, sizeof(name)))
+    if (bind(sock, (void *) &name, sizeof(name))) {
         printError("Binding tcp socket")
-    if (listen(sock, 1) == -1)
+    }
+    if (listen(sock, 1) == -1) {
         printError("listen")
+    }
+
+    printf("Server has started!\n");
 
     char ipStr[INET_ADDRSTRLEN];
     struct sockaddr clientAddr;
@@ -305,7 +358,7 @@ int main(int argc, char* argv[]) {
     }
     close(sock);
     pfree(storage);
-    close(fd);
+    close(outputFD);
 
     printf("Bye!\n");
     return 0;

@@ -4,7 +4,7 @@ project(spo C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_FLAGS "-pthread")
 
-add_executable(client client/client.c client/cmd_parser.c client/cmd_parser.h util.c util.h mt.h)
+add_executable(client client/client.c client/cmd_parser.c client/cmd_parser.h command_api.c command_api.h util.c util.h mt.h)
 add_executable(server server/server.c server/storage.c server/storage.h command_api.c command_api.h util.c util.h)
 
 find_package(LibXml2 REQUIRED)
