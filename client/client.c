@@ -8,32 +8,12 @@
 #include "../command_api.h"
 #include "cmd_parser.h"
 
-void sendQuery(int sock, int pid, FILE* commandsFD) {
-    char* inputCmd;
+void sendQuery(int sock, int pipefd[]) {
     struct command cmd;
-    char* outputXml = malloc(sizeof(char) * MAX_MSG_LENGTH);
+    char* inputCmd = malloc(sizeof(char) * MAX_MSG_LENGTH);
+    char* outputXml = calloc(sizeof(char), MAX_MSG_LENGTH);
 
-    // register mode
-//    if (commandsFD != NULL) {
-//        inputCmd = malloc(sizeof(char) * REG_BUFFER_SIZE);
-//
-//        while (fgets(inputCmd, REG_BUFFER_SIZE, commandsFD)) {
-//
-//            inputToCommand(inputCmd, &cmd);
-//
-//            cmdToXml(cmd, outputXml);
-//
-//            if (send(sock, outputXml, strlen(outputXml)+1, 0) < 0) {
-//                printError("Error while sending request")
-//            }
-//
-//            sleep(5);
-//        }
-//        free(inputCmd);
-//    }
-
-    inputCmd = malloc(sizeof(char) * MAX_MSG_LENGTH);
-
+    close(pipefd[1]);
     while (1) {
         readCmd(inputCmd, sizeof(char) * MAX_MSG_LENGTH);
 
@@ -43,7 +23,7 @@ void sendQuery(int sock, int pid, FILE* commandsFD) {
         struct message* msg = inputToCommand(inputCmd, &cmd);
 
         if (msg->status == 0) {
-            printf("Syntax error : %s \n\n",msg->info);
+            printf("Syntax error: %s \n\n",msg->info);
             pfree(msg);
             continue;
         }
@@ -51,23 +31,30 @@ void sendQuery(int sock, int pid, FILE* commandsFD) {
         cmdToXml(cmd, outputXml);
 
         if (send(sock, outputXml, strlen(outputXml)+1, 0) < 0) {
-            printError("Error while sending request")
+            printError("Error occurred while sending request")
         }
 
-//        sleep(1);
-//
         outputXml[0] = 0;
-    }
 
-    pfree(outputXml);
-    kill(pid, SIGKILL);
-    printf("Disconnected\n");
+        int isResponseReceived = 0;
+        if (read(pipefd[0], &isResponseReceived, sizeof(isResponseReceived)) == -1) {
+            printError("Error occurred while reading from pipe")
+        }
+        if (!isResponseReceived) {
+            printError("Response has not received")
+        }
+
+    }
+    // nothing here
+    close(pipefd[0]);
 }
 
-void receive(int sock) {
+void receive(int sock, int pipefd[2]) {
     char buf[MAX_MSG_LENGTH] = {0};
     struct message msg;
 
+    close(pipefd[0]);
+    int isResponseReceived = 1;
     size_t filled = recv(sock, buf, MAX_MSG_LENGTH - 1, 0);
     while (filled) {
         buf[filled] = '\0';
@@ -77,32 +64,25 @@ void receive(int sock) {
 
         bzero(buf, sizeof(buf));
         fflush(stdout);
+
+        if (write(pipefd[1], &isResponseReceived, sizeof(isResponseReceived)) == -1) {
+            printError("Error occurred while writing to pipe")
+        }
+
         filled = recv(sock, buf, MAX_MSG_LENGTH - 1, 0);
     }
 
+    close(pipefd[1]);
     printf("Server disconnected.\n");
 }
 
 
 int main(int argc, char* argv[]) {
-    int port;
-
     if (argc < 2) {
         printError("Invalid arguments: client PORT [COMMANDS_FILE]")
     }
 
-    port = (int) strtol(argv[1], NULL, 10);
-
-    FILE* commandsFD = NULL;
-    if (argc == 3) {
-        commandsFD = fopen(argv[2], "r");
-
-        if (commandsFD == NULL) {
-            printf("Error: could not open the commands file");
-            return 1;
-        }
-    }
-
+    int port = (int) strtol(argv[1], NULL, 10);
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == -1)
@@ -116,15 +96,22 @@ int main(int argc, char* argv[]) {
 	connection.sin_family = AF_INET;
 	memcpy(&connection.sin_addr, &server_addr, sizeof(server_addr));
 	connection.sin_port = htons(port);
-	if (connect(sock, (const struct sockaddr*) &connection, sizeof(connection)) != 0)
+	if (connect(sock, (const struct sockaddr*) &connection, sizeof(connection)) != 0) {
         printError("Failed connection")
+    }
+
+    int pipefd[2];
+    if (pipe(pipefd) == -1) {
+        printError("Error while opening the pipe\n")
+    }
 
 	pid_t pid = fork();
 	if (pid) {
-        sendQuery(sock, pid, commandsFD);
+        sendQuery(sock, pipefd);
 	}
-	else
-        receive(sock);
+	else {
+        receive(sock, pipefd);
+    }
 
 	return 0;
 }

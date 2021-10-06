@@ -60,10 +60,7 @@ void printLogMessage(struct command* command) {
             break;
     }
 }
-void printLogNode(struct node* currentNode)
-{
-
-
+void printLogNode(struct node* currentNode) {
     printf("        NameNode = %s\n",currentNode->name);
     fprintf(fp,"        NameNode = %s\n",currentNode->name);
     printf("        AddresNode = %lu\n",currentNode->addr);
@@ -74,8 +71,8 @@ void printLogNode(struct node* currentNode)
     fprintf(fp,"        NextNode = %lu\n",currentNode->next);
     printf("        ChildNode = %lu\n",currentNode->child);
     fprintf(fp,"        ChildNode = %lu\n\n",currentNode->child);
-
 }
+
 struct message* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
     struct message* response = malloc(sizeof(*response));
 
@@ -207,7 +204,7 @@ struct message* handleRequestDelete(struct storage* storage, char** tokenizedPat
     return response;
 }
 
-struct message* handleRequest(struct storage* storage, struct command* command,FILE *fp) {
+struct message* handleRequest(struct storage* storage, struct command* command) {
     struct message* response;
     printLogMessage(command);
     printLogMessage(command);
@@ -264,7 +261,7 @@ void handleClient(struct storage* storage, int socket) {
         char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
         struct command* command = xmlToStruct(xmlInput, rootPath);
 
-        struct message* response = handleRequest(storage, command,NULL);
+        struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
         send(socket, responseStr, strlen(responseStr), MSG_NOSIGNAL);
@@ -323,14 +320,9 @@ int main(int argc, char* argv[]) {
 
 
         while (fgets(inputCmd, REG_BUFFER_SIZE, commandsFD)) {
-            i++;
-            if( i>=115884){
-                i=i+1;
-            }else
-            {
-                i=i;
-            }
-            fprintf(fp,"-------------------------------------------------\n№:%d =   ", i);
+            i = i + 1;
+
+            fprintf(fp,"-------------------------------------------------\n№:%zu =   ", i);
             struct message* msg=inputToCommand(inputCmd, command);
 
             if (msg->status == 0) {
@@ -338,7 +330,7 @@ int main(int argc, char* argv[]) {
                 pfree(msg);
                 continue;
             }
-            printf("№:%d =   ", i);
+            printf("№:%zu =   ", i);
             char* inputDup=strdup(inputCmd);
             size_t pathSize = strlen(rootPath) + strlen(command->path) + 2;
 
@@ -346,23 +338,22 @@ int main(int argc, char* argv[]) {
             snprintf(path, pathSize, "%s.%s", rootPath, command->path);
             command->path = path;
 
-            struct message* response = handleRequest(storage, command,fp);
+            struct message* response = handleRequest(storage, command);
 
             printf("inputCommand:%s \n[code: %d] %s\n",inputDup, response->status, response->info);
             fprintf(fp,"inputCommand:%s \n [code: %d] %s\n -------------------------------------------------\n",inputDup, response->status, response->info);
 //            sleep(1);
             free(response);
         }
-        printf(" \n SIZE = %d \n",i);
+        printf(" \n SIZE = %zu \n", i);
         fclose(fp);
+
         freeCommand(command);
         free(inputCmd);
 
         printf("The work is done. Goodbye!\n");
         exit(0);
     }
-
-
 
     int sock, port;
     int optval = 1;

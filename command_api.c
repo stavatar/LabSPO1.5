@@ -144,12 +144,6 @@ struct message* inputToCommand(char* originalStrCmd, struct command* cmd) {
     bool isNameRead = (cmd->apiAction == COMMAND_READ);
 
     char* other = strtok(NULL,"\r\n");
-    bool isUseReservedSym = (strstr( other,"$" ) != NULL)&& (cmd->apiAction != COMMAND_READ);
-    if (isUseReservedSym) {
-        msg->info = "cannot use $ in commands CREATE, UPDATE and DELETE";
-        msg->status = 0;
-        return msg;
-    }
 
     bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
     if ( !isExistPath ) {
@@ -175,6 +169,14 @@ struct message* inputToCommand(char* originalStrCmd, struct command* cmd) {
     }
 
     cmd->path = strtok(other,"[");
+
+    bool isUseReservedSym = (strcmp(cmd->path, "$") == 0) && (cmd->apiAction != COMMAND_READ);
+    if (isUseReservedSym) {
+//        printf("%s\n", strCmd);
+        msg->info = "cannot use $ in commands CREATE, UPDATE and DELETE";
+        msg->status = 0;
+        return msg;
+    }
 
     bool isContainBracket = (strstr( cmd->path,"[" ) != NULL) || (strstr( cmd->path,"]" ) != NULL);
     if ( isContainBracket ) {

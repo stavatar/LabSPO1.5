@@ -114,7 +114,7 @@ struct node* storageFindNode(struct storage* storage, char* path[], size_t pathL
 
         lseek(storage->fd, (__off_t) nodeNameAddr, SEEK_SET);
         char* nodeName = storageReadString(storage->fd);
-        if(nodeName == NULL){
+        if (nodeName == NULL) {
             pfree(nodeName);
             nodeAddr = nodeNextAddr;
             continue;
@@ -153,9 +153,8 @@ struct node* storageFindNode(struct storage* storage, char* path[], size_t pathL
 
 uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, char* childrenName) {
     uint64_t nodeAddr = parentNode->child;
-    printf("         START storageFindChildren\n",nodeAddr);
+    printf("         START storageFindChildren\n");
 
-    char* prevName;
     while (nodeAddr) {
         lseek(storage->fd, (__off_t) nodeAddr, SEEK_SET);
 
@@ -165,7 +164,7 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
 
         lseek(storage->fd, (__off_t) nodeNameAddr, SEEK_SET);
         char* nodeName = storageReadString(storage->fd);
-        if(nodeName == NULL){
+        if (nodeName == NULL) {
             pfree(nodeName);
             printf("  NULL NAME from NODE. ADDR = %lu\n",nodeAddr);
             nodeAddr = nodeNextAddr;
@@ -178,10 +177,10 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
             nodeAddr = nodeNextAddr;
             continue;
         }
-        printf("\n         END storageFindChildren\n",nodeAddr);
+        printf("\n         END storageFindChildren\n");
         return nodeAddr;
     }
-    printf("\n         END storageFindChildren\n",nodeAddr);
+    printf("\n         END storageFindChildren\n");
     return 0;
 }
 

@@ -17,7 +17,7 @@ Set oReg=GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & _
 result = ""
 
 dotPath = ""
-slashPath = "SYSTEM\Keyboard Layout"
+slashPath = "SYSTEM"
 
 outFile = "commands.txt"
 Set objFile = objFSO.CreateTextFile(outFile, True)
