@@ -1,25 +1,13 @@
-#include <stdbool.h>
+#pragma once
 
-#ifndef SPO_NOW_UTIL_H
-#define SPO_NOW_UTIL_H
+#define printError(x) { fprintf(stderr, "%s\n", x); exit(1);}
 
-#define ROOT_NODE "root"
+#define REG_BUFFER_SIZE 4096
+#define MAX_MSG_LENGTH (4096 + 128)
+#define ROOT_NODE_NAME "root"
+// len of string (ROOT_NODE_NAME ".")
+#define ROOT_NODE_NAME_LEN (sizeof(ROOT_NODE_NAME))
 
-struct keyValue {
-    char* key;
-    char* value;
-};
-
-struct command {
-    char* name;
-    char* path;
-    struct keyValue* keyValueArray;
-    size_t paramCount;
-};
-
-struct message {
-    int status;
-    char* info;
-};
-
-#endif
+int stringArrayLen(char** arr);
+void pfree(void* ptr);
+void toLowerCase(char* str, size_t size);

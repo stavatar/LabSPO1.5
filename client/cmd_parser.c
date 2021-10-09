@@ -5,73 +5,70 @@
 struct message xmlToMsg(const char *text) {
     xmlDoc* docPtr = xmlParseMemory(text, MAX_MSG_LENGTH);
     xmlXPathContext* xpathCtxPtr = xmlXPathNewContext(docPtr);
-    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//Code", xpathCtxPtr);
+
+    xmlXPathObjectPtr xmlNodeCode=xmlXPathEvalExpression(BAD_CAST "//status", xpathCtxPtr);
     int status = (int) strtol((char*) xmlNodeCode->nodesetval->nodeTab[0]->children->content, NULL, 10);
-    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//Text", xpathCtxPtr);
+
+    xmlXPathObjectPtr xmlNodeText=xmlXPathEvalExpression(BAD_CAST "//info", xpathCtxPtr);
     char* info = (char*) xmlNodeText->nodesetval->nodeTab[0]->children->content;
 
     return (struct message) {.status = status, .info = info};
 }
 
-void toLowerCase(char* str, size_t size) {
-    for (size_t i = 0; i < size; i++) {
-        str[i] = (char) tolower(str[i]);
-    }
-}
+void cmdToXml(struct command cmd, char* outputXml) {
+    strcat(outputXml, "<command>");
+    strcat(outputXml, "<action>");
 
-// adds parameters into struct command
-void initCmd(char* values, struct command* cmd) {
-    char* params[64];
-    size_t paramCount;
+    char nameCommand[2] = {0};
+    snprintf(nameCommand, 2, "%d", cmd.apiAction);
+    strcat(outputXml, nameCommand);
 
-    params[0] = strtok(values,",");
-    for (paramCount = 1; params[paramCount-1] != NULL; paramCount++) {
-        params[paramCount] = strtok(NULL, ",");
-    }
-    cmd->paramCount = --paramCount;
+    strcat(outputXml, "</action>");
 
-    cmd->keyValueArray = malloc(sizeof(struct keyValue) * paramCount);
-    for (size_t i = 0; i < paramCount; i++) {
-        cmd->keyValueArray[i].key = strtok(params[i], "=");
-        cmd->keyValueArray[i].value = strtok(NULL, "=");
-
-    }
-}
-
-struct command parseInputCmd(char* strCmd) {
-    struct command cmd;
-
-    cmd.name = strtok(strCmd," ");
-    char* other = strtok(NULL,"\n");
-    cmd.path = strtok(other,"[");
-    char* values1 = strtok(NULL,"]");
-    char* values2 = strtok(values1,"\n");
-    initCmd(values2, &cmd);
-
-    toLowerCase(cmd.name, strlen(cmd.name));
-    toLowerCase(cmd.path, strlen(cmd.path));
-
-    return cmd;
-}
-
-// struct command => xml
-void cmdToXml(const struct command cmd, char* const outputXml) {
-    strcat(outputXml, "<Command>");
-    strcat(outputXml, "<Name>");
-    strcat(outputXml, cmd.name);
-    strcat(outputXml, "</Name>");
-    strcat(outputXml, "<Path>");
+    strcat(outputXml, "<path>");
     strcat(outputXml, cmd.path);
-    strcat(outputXml, "</Path>");
-    for (int i = 0; i < cmd.paramCount; i++) {
-        strcat(outputXml, "<Value key=\"");
-        strcat(outputXml, cmd.keyValueArray[i].key);
-        strcat(outputXml, "\">");
-        if (cmd.keyValueArray[i].value != NULL)
-            strcat(outputXml, cmd.keyValueArray[i].value);
-        strcat(outputXml, "</Value>");
+    strcat(outputXml, "</path>");
+
+    switch ( cmd.apiAction) {
+        case COMMAND_CREATE:
+            strcat(outputXml, "<value>");
+            if (cmd.apiCreateParams.value != NULL)
+                strcat(outputXml, cmd.apiCreateParams.value);
+            strcat(outputXml, "</value>");
+            break;
+        case COMMAND_UPDATE:
+            strcat(outputXml, "<value>");
+            if (cmd.apiUpdateParams.value != NULL)
+                strcat(outputXml, cmd.apiUpdateParams.value);
+            strcat(outputXml, "</value>");
+            break;
+        case COMMAND_DELETE:
+            strcat(outputXml, "<isDelValue>");
+            if (cmd.apiDeleteParams.isDelValue)
+                strcat(outputXml, "1");
+            else
+                strcat(outputXml, "0");
+            strcat(outputXml, "</isDelValue>");
+            break;
+        case COMMAND_READ:
+            break;
     }
-    strcat(outputXml, "</Command>");
+    strcat(outputXml, "</command>");
+
+//    char* outputXmlAmpReplaced = malloc(sizeof(*outputXmlAmpReplaced) * MAX_MSG_LENGTH);
+//    size_t posCopyMas = 0;
+//    for (size_t i = 0; i < strlen(outputXml); ++i) {
+//        outputXmlAmpReplaced[posCopyMas] = outputXml[i];
+//        if (outputXml[i] == '&'){
+//            outputXmlAmpReplaced[++posCopyMas] = 'a';
+//            outputXmlAmpReplaced[++posCopyMas] = 'm';
+//            outputXmlAmpReplaced[++posCopyMas] = 'p';
+//            outputXmlAmpReplaced[++posCopyMas] = ';';
+//        }
+//    }
+//
+//    free(outputXml);
+//    outputXml = outputXmlAmpReplaced;
 }
 
 void readCmd(char* inputCmd, size_t size) {
