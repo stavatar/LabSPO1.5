@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+#define NAME_ARR_BLOCK_SIZE 512
+
 /*
  * Storage structure:
  *

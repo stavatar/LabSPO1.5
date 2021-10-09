@@ -153,7 +153,6 @@ struct node* storageFindNode(struct storage* storage, char* path[], size_t pathL
 
 uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, char* childrenName) {
     uint64_t nodeAddr = parentNode->child;
-    printf("         START storageFindChildren\n");
 
     while (nodeAddr) {
         lseek(storage->fd, (__off_t) nodeAddr, SEEK_SET);
@@ -166,21 +165,17 @@ uint64_t storageFindChildren(struct storage* storage, struct node* parentNode, c
         char* nodeName = storageReadString(storage->fd);
         if (nodeName == NULL) {
             pfree(nodeName);
-            printf("  NULL NAME from NODE. ADDR = %lu\n",nodeAddr);
             nodeAddr = nodeNextAddr;
             continue;
         }
         if (strcmp(nodeName, childrenName) != 0) {
 
-            printf("  NAME = %s ADDR = %lu |",nodeName,nodeAddr);
             pfree(nodeName);
             nodeAddr = nodeNextAddr;
             continue;
         }
-        printf("\n         END storageFindChildren\n");
         return nodeAddr;
     }
-    printf("\n         END storageFindChildren\n");
     return 0;
 }
 
@@ -191,8 +186,9 @@ void storageFreeNode(struct node* node) {
 }
 
 char** storageGetAllChildrenName(struct storage* storage, struct node* parentNode) {
-    char** nameArr = malloc(sizeof(char*) * 256);
+    char** nameArr = malloc(sizeof(char*) * NAME_ARR_BLOCK_SIZE);
     size_t i = 0;
+    size_t nameArrSize = NAME_ARR_BLOCK_SIZE;
 
     uint64_t currentNodeAddr;
     uint64_t nextNodeAddr = parentNode->child;
@@ -208,6 +204,11 @@ char** storageGetAllChildrenName(struct storage* storage, struct node* parentNod
         lseek(storage->fd, (__off_t) nameAddr, SEEK_SET);
         nameArr[i] = storageReadString(storage->fd);
         i++;
+
+        if (i == nameArrSize) {
+            nameArrSize += NAME_ARR_BLOCK_SIZE;
+            nameArr = realloc(nameArr, sizeof(char*) * nameArrSize);
+        }
     }
 
     nameArr[i] = 0;
@@ -216,7 +217,6 @@ char** storageGetAllChildrenName(struct storage* storage, struct node* parentNod
 
 void storageCreateNode(struct storage* storage, struct node* parentNode, struct node* newNode) {
     uint64_t nameAddr = storageWriteString(storage->fd, newNode->name);
-    printf(" START CREATE NAME = %s,ADDR NAME= %lu",newNode->name, nameAddr);
 
     uint64_t valueAddr;
     if (newNode->value != NULL) {
@@ -227,7 +227,8 @@ void storageCreateNode(struct storage* storage, struct node* parentNode, struct 
     }
 
     uint64_t offset = storageWrite(storage->fd, &nameAddr, sizeof(nameAddr));
-    newNode->addr=offset;
+    newNode->addr = offset;
+
     storageWrite(storage->fd, &newNode->next, sizeof(newNode->next));
     storageWrite(storage->fd, &newNode->child, sizeof(newNode->child));
     storageWrite(storage->fd, &valueAddr, sizeof(valueAddr));
@@ -251,7 +252,6 @@ void storageCreateNode(struct storage* storage, struct node* parentNode, struct 
         lseek(storage->fd, (__off_t) (currentNodeAddr + sizeof(uint64_t) * NEXT_OFFSET), SEEK_SET);
         write(storage->fd, &offset, sizeof(uint64_t));
     }
-    printf(" END CREATE");
 }
 
 void storageUpdateNode(struct storage* storage, struct node* node, char* newValue){

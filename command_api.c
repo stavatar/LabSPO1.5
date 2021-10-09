@@ -145,6 +145,12 @@ struct message* inputToCommand(char* originalStrCmd, struct command* cmd) {
 
     char* other = strtok(NULL,"\r\n");
 
+    if (strstr(other, "<") != NULL || strstr(other, ">") != NULL) {
+        msg->info = "Cannot use <> in path";
+        msg->status = 0;
+        return msg;
+    }
+
     bool isExistPath = (other != NULL) && ( (( strcspn( other, "[" )) > 0) || (isNameRead) );
     if ( !isExistPath ) {
         msg->info = "missing path";
@@ -172,7 +178,6 @@ struct message* inputToCommand(char* originalStrCmd, struct command* cmd) {
 
     bool isUseReservedSym = (strcmp(cmd->path, "$") == 0) && (cmd->apiAction != COMMAND_READ);
     if (isUseReservedSym) {
-//        printf("%s\n", strCmd);
         msg->info = "cannot use $ in commands CREATE, UPDATE and DELETE";
         msg->status = 0;
         return msg;

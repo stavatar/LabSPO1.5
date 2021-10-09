@@ -15,35 +15,29 @@ FILE *fp;
 
 void printLogMessage(struct command* command) {
     printf("The command received \"");
-    fprintf(fp,"\nThe command received \"");
+    fprintf(fp,"The command received \"");
+
     switch (command->apiAction) {
         case COMMAND_CREATE:
             printf("create %s", command->path);
             fprintf(fp,"create %s", command->path);
             if (command->apiCreateParams.value != NULL) {
-                printf(" %s", command->apiCreateParams.value);
-                fprintf(fp," %s", command->apiCreateParams.value);
+                printf("[%s]", command->apiCreateParams.value);
+                fprintf(fp,"[%s]", command->apiCreateParams.value);
             }
-            printf("\"\n");
-            fprintf(fp,"\"\n");
             break;
         case COMMAND_READ:
             printf("read %s", command->path);
             fprintf(fp,"read %s", command->path);
-
-            printf("\"\n");
-            fprintf(fp,"\"\n");
             break;
         case COMMAND_UPDATE:
             printf("update %s", command->path);
             fprintf(fp,"update %s", command->path);
 
             if (command->apiUpdateParams.value != NULL) {
-                printf(" %s", command->apiUpdateParams.value);
-                fprintf(fp," %s", command->apiUpdateParams.value);
+                printf("[%s]", command->apiUpdateParams.value);
+                fprintf(fp,"[%s]", command->apiUpdateParams.value);
             }
-            printf("\"\n");
-            fprintf(fp,"\"\n");
             break;
         case COMMAND_DELETE:
             printf("delete %s, target: ", command->path);
@@ -55,22 +49,19 @@ void printLogMessage(struct command* command) {
                 printf("node");
                 fprintf(fp,"node");
             }
-            printf("\"\n");
-            fprintf(fp,"\"\n");
             break;
     }
+
+    printf("\"\n");
+    fprintf(fp,"\"\n");
 }
+
 void printLogNode(struct node* currentNode) {
-    printf("        NameNode = %s\n",currentNode->name);
-    fprintf(fp,"        NameNode = %s\n",currentNode->name);
-    printf("        AddresNode = %lu\n",currentNode->addr);
-    fprintf(fp,"        AddresNode = %lu\n",currentNode->addr);
-    printf("        ValueNode = %s\n",currentNode->value);
-    fprintf(fp,"        ValueNode = %s\n",currentNode->value);
-    printf("        NextNode = %lu\n",currentNode->next);
-    fprintf(fp,"        NextNode = %lu\n",currentNode->next);
-    printf("        ChildNode = %lu\n",currentNode->child);
-    fprintf(fp,"        ChildNode = %lu\n\n",currentNode->child);
+    fprintf(fp,"        Name:          %s\n",currentNode->name);
+    fprintf(fp,"        Address:       %" PRIu64 "\n",currentNode->addr);
+    fprintf(fp,"        Next address:  %" PRIu64 "\n",currentNode->next);
+    fprintf(fp,"        Child address: %" PRIu64 "\n",currentNode->child);
+    fprintf(fp,"        Value:         %s\n\n",currentNode->value);
 }
 
 struct message* handleRequestCreate(struct storage* storage, char** tokenizedPath, size_t pathLen, struct apiCreateParams* params) {
@@ -83,8 +74,7 @@ struct message* handleRequestCreate(struct storage* storage, char** tokenizedPat
         response->info = "Node is not found";
         return response;
     }
-    printf("        PARENT\n");
-    fprintf(fp,"        PARENT\n");
+    fprintf(fp,"        PARENT NODE\n");
     printLogNode(parentNode);
     uint64_t childrenAddr = storageFindChildren(storage, parentNode, tokenizedPath[pathLen - 1]);
 
@@ -95,13 +85,11 @@ struct message* handleRequestCreate(struct storage* storage, char** tokenizedPat
                 .child = 0,
                 .value = params->value
         };
-        printf("        AddNode\n");
-        fprintf(fp,"        AddNEWNode\n");
-        printLogNode(&newNode);
 
         storageCreateNode(storage, parentNode, &newNode);
-        printf("        NEWAddresNode = %lu\n",newNode.addr);
-        fprintf(fp,"        NEWAddresNode = %lu\n",newNode.addr);
+
+        fprintf(fp,"        NEW NODE\n");
+        printLogNode(&newNode);
 
         response->status = 1;
         response->info = "Node is successfully created!";
@@ -207,7 +195,6 @@ struct message* handleRequestDelete(struct storage* storage, char** tokenizedPat
 struct message* handleRequest(struct storage* storage, struct command* command) {
     struct message* response;
     printLogMessage(command);
-    printLogMessage(command);
 
     char** tokenizedPath = tokenizePath(command->path, ".");
     size_t pathLen = stringArrayLen(tokenizedPath);
@@ -235,8 +222,6 @@ struct message* handleRequest(struct storage* storage, struct command* command) 
         }
     }
     freeStringArray(tokenizedPath);
-//    freeCommand(command);
-//    pfree(command);
 
     return response;
 }
@@ -260,13 +245,17 @@ void handleClient(struct storage* storage, int socket) {
 
         char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
         struct command* command = xmlToStruct(xmlInput, rootPath);
-
+        if (command == NULL) {
+            printf("Error: wrong encoding");
+            continue;
+        }
         struct message* response = handleRequest(storage, command);
 
         char* responseStr = responseToString(response);
         send(socket, responseStr, strlen(responseStr), MSG_NOSIGNAL);
 
-        printf("Response: %s\n", responseStr);
+        printf("Response: [%d] %s\n\n", response->status, response->info);
+        fprintf(fp,"Response: [%d] %s\n\n", response->status, response->info);
 
         freeCommand(command);
         pfree(response);
@@ -280,6 +269,7 @@ int main(int argc, char* argv[]) {
     if (argc < 3) {
         printError("Invalid arguments: server [PORT] [STORAGE_FILE] [COMMANDS_FILE]\n")
     }
+
     fp = fopen("logServer.txt", "w");
     setbuf(stdout, NULL);
 
@@ -299,60 +289,6 @@ int main(int argc, char* argv[]) {
         storage = storageInitRoot(outputFD, storage, &rootNode);
     } else {
         storage = storageOpen(outputFD);
-    }
-
-
-    FILE* commandsFD = NULL;
-    if (argc == 4) {
-        commandsFD = fopen(argv[3], "r");
-
-        if (commandsFD == NULL) {
-            printf("Error: could not open the commands file");
-            return 1;
-        }
-    }
-
-    if (commandsFD != NULL) {
-        char* inputCmd = malloc(sizeof(char) * REG_BUFFER_SIZE);
-        struct command* command = malloc(sizeof(*command));
-         size_t i=0;
-        char rootPath[ROOT_NODE_NAME_LEN] = ROOT_NODE_NAME;
-
-
-        while (fgets(inputCmd, REG_BUFFER_SIZE, commandsFD)) {
-            i = i + 1;
-
-            fprintf(fp,"-------------------------------------------------\n№:%zu =   ", i);
-            struct message* msg=inputToCommand(inputCmd, command);
-
-            if (msg->status == 0) {
-                printf("Syntax error : %s \n\n",msg->info);
-                pfree(msg);
-                continue;
-            }
-            printf("№:%zu =   ", i);
-            char* inputDup=strdup(inputCmd);
-            size_t pathSize = strlen(rootPath) + strlen(command->path) + 2;
-
-            char* path = malloc(sizeof(char) * pathSize);
-            snprintf(path, pathSize, "%s.%s", rootPath, command->path);
-            command->path = path;
-
-            struct message* response = handleRequest(storage, command);
-
-            printf("inputCommand:%s \n[code: %d] %s\n",inputDup, response->status, response->info);
-            fprintf(fp,"inputCommand:%s \n [code: %d] %s\n -------------------------------------------------\n",inputDup, response->status, response->info);
-//            sleep(1);
-            free(response);
-        }
-        printf(" \n SIZE = %zu \n", i);
-        fclose(fp);
-
-        freeCommand(command);
-        free(inputCmd);
-
-        printf("The work is done. Goodbye!\n");
-        exit(0);
     }
 
     int sock, port;
@@ -402,10 +338,13 @@ int main(int argc, char* argv[]) {
 //            if (dup2(newSocket, STDERR_FILENO) == -1) { printError("dup2") }
 
             printf("Client %s connected\n", ipStr);
+
             handleClient(storage, newSocket);
         }
         newSocket = accept(sock, &clientAddr, &clientLen);
     }
+
+    fclose(fp);
     close(sock);
     pfree(storage);
     close(outputFD);
